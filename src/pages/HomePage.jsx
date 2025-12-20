@@ -16,14 +16,14 @@ import GlobalLoader from '../components/GlobalLoader';
 import { WatchlistContext } from '../context/WatchlistContext';
 import { UserContext } from '../context/UserContext';
 import { FilterContext } from '../context/FilterContext';
-import { getPosterUrl } from "../config/tmdbImage";
+import { getPoster } from "../utils/poster";
 
 // Hero Slide Component
 const HeroSlide = ({ movie }) => {
     const navigate = useNavigate();
     const { addToWatchlist, removeFromWatchlist, checkIfInWatchlist } = useContext(WatchlistContext);
     const inList = checkIfInWatchlist(movie?.id);
-    const background = movie?.backdrop_path ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}` : getPosterUrl(movie?.poster_path, 'w342');
+    const background = movie?.backdrop_path ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}` : getPoster(movie?.poster_path, 'w342');
 
     if (!movie) return null;
 

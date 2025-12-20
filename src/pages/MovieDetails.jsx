@@ -1,7 +1,7 @@
 // src/pages/MovieDetails.jsx
 import React, { useEffect, useState, useCallback, useContext } from "react";
 import { backdropUrl } from "../api/tmdbImages";
-import { getPosterUrl } from "../config/tmdbImage";
+import { getPoster } from "../utils/poster";
 import { getProviderLogo } from "../config/tmdbProviders";
 import { useParams, useNavigate } from "react-router-dom";
 import {
@@ -131,7 +131,7 @@ export default function MovieDetails() {
 
     const title = details.title || details.name;
     const backdrop = backdropUrl(details.backdrop_path);
-    const poster = getPosterUrl(details.poster_path, "w342");
+    const poster = getPoster(details.poster_path);
     const year = (details.release_date || details.first_air_date || "").slice(0, 4);
     const runtime = details.runtime ? `${Math.floor(details.runtime / 60)}h ${details.runtime % 60}m` : null;
     const inList = checkIfInWatchlist(details.id);
@@ -166,7 +166,7 @@ export default function MovieDetails() {
                 <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-16 max-w-7xl mx-auto z-10">
                     <div className="flex flex-col md:flex-row gap-10 items-end">
                         {/* Poster (Desktop) */}
-                        <div className="hidden md:block w-72 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex-shrink-0 animate-fade-in-up">
+                        <div className="block w-72 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex-shrink-0 animate-fade-in-up">
                             <SmartImage src={poster} className="w-full h-full object-cover" />
                         </div>
 
@@ -277,7 +277,7 @@ export default function MovieDetails() {
                                     >
                                         <div className={`aspect-[2/3] rounded-xl overflow-hidden mb-3 border-2 transition-colors ${isActive ? 'border-primary-yellow shadow-[0_0_20px_rgba(245,197,24,0.3)]' : 'border-transparent group-hover:border-white/30'}`}>
                                             <SmartImage
-                                                src={getPosterUrl(season.poster_path)}
+                                                src={getPoster(season.poster_path)}
                                                 className="w-full h-full object-cover"
                                             />
                                         </div>

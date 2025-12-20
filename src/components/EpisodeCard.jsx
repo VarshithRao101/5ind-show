@@ -2,14 +2,14 @@
 import React, { useState } from "react";
 import { FiPlay } from "react-icons/fi";
 
-import { getPosterUrl } from "../config/tmdbImage";
+import { getPoster } from "../utils/poster";
 
 export default function EpisodeCard({ episode, onPlayTrailer, onWatchNow }) {
   const [expanded, setExpanded] = useState(false);
 
   if (!episode) return null;
 
-  const thumb = getPosterUrl(episode.still_path, 'w500');
+  const thumb = getPoster(episode.still_path, 'w500');
   const title = episode.name || `Episode ${episode.episode_number}`;
   const number = episode.episode_number;
   const runtime = episode.runtime ? `${episode.runtime}m` : "";

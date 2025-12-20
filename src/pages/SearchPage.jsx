@@ -4,7 +4,7 @@ import { searchMulti } from "../services/tmdb";
 import MovieCard from "../components/MovieCard";
 import SkeletonCard from "../components/skeletons/SkeletonCard";
 import { FiFilm, FiTv, FiUser, FiSearch, FiX } from "react-icons/fi";
-import { getPosterUrl } from "../config/tmdbImage";
+import { getPoster } from "../utils/poster";
 
 // -----------------------------------------------------------------------------
 // FILTER LOGIC
@@ -218,7 +218,7 @@ export default function SearchPage() {
                                                 >
                                                     <div className="aspect-[3/4] rounded-xl overflow-hidden mb-3 border border-white/5 group-hover:border-[#FFD400] transition-colors shadow-lg bg-[#1f1f1f]">
                                                         <img
-                                                            src={getPosterUrl(a.profile_path)}
+                                                            src={getPoster(a.profile_path)}
                                                             alt={a.name}
                                                             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                                                             loading="lazy"

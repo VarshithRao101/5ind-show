@@ -9,6 +9,7 @@ import {
     getCredits,
     getSimilarSeries
 } from "../services/tmdb";
+import { getPoster } from "../utils/poster";
 import TrailerModal from "../components/TrailerModal";
 import EpisodeCard from "../components/EpisodeCard";
 import MovieCard from "../components/MovieCard";
@@ -145,7 +146,7 @@ export default function SeriesPage() {
     );
 
     const backdrop = tv.backdrop_path ? `https://image.tmdb.org/t/p/w500${tv.backdrop_path}` : null;
-    const poster = tv.poster_path ? `https://image.tmdb.org/t/p/w342${tv.poster_path}` : null;
+    const poster = getPoster(tv.poster_path);
 
     return (
         <div className="min-h-screen bg-[#0f0f0f] text-white pb-20 font-sans">
@@ -160,8 +161,8 @@ export default function SeriesPage() {
                 <div className="absolute inset-0 max-w-7xl mx-auto px-6 lg:px-8 flex flex-col justify-end pb-16 z-10">
                     <div className="flex flex-col lg:flex-row gap-8 items-end">
                         {/* Poster */}
-                        <div className="hidden lg:block w-72 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex-shrink-0 animate-fade-in-up md:mb-0 mb-6">
-                            {poster && <img src={poster} alt={tv.name} className="w-full h-auto object-cover" />}
+                        <div className="block w-72 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex-shrink-0 animate-fade-in-up md:mb-0 mb-6">
+                            <img src={poster} alt={tv.name} className="w-full h-auto object-cover" loading="lazy" />
                         </div>
                         {/* Text */}
                         <div className="flex-1 space-y-6 animate-fade-in-up" style={{ animationDelay: '0.1s' }}>

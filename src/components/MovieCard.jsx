@@ -2,7 +2,7 @@ import React, { useContext, useState, memo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiPlus, FiCheck, FiStar, FiInfo } from 'react-icons/fi';
-import { getPosterUrl } from '../config/tmdbImage';
+import { getPoster } from '../utils/poster';
 import { getRating } from '../utils/getRating';
 import { getMediaRoute } from '../utils/mediaUtils';
 import { WatchlistContext } from '../context/WatchlistContext';
@@ -96,12 +96,11 @@ const MovieCard = memo(({ movie, onClick, rank }) => {
           whileHover="hover"
           whileTap="tap"
         >
-          <motion.img
-            src={getPosterUrl(movie.poster_path)}
+          <img
+            src={getPoster(movie.poster_path)}
             alt={movie.title || movie.name}
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover rounded-xl"
             loading="lazy"
-            variants={imageVariants}
           />
 
           <motion.div
@@ -144,12 +143,11 @@ const MovieCard = memo(({ movie, onClick, rank }) => {
       onClick={handleCardClick}
     >
       {/* Poster with Zoom */}
-      <motion.img
-        src={getPosterUrl(movie.poster_path)}
+      <img
+        src={getPoster(movie.poster_path)}
         alt={movie.title || movie.name}
-        className="w-full h-full object-cover transform-gpu"
+        className="w-full h-full object-cover rounded-xl"
         loading="lazy"
-        variants={imageVariants}
       />
 
       {/* Dark Gradient Overlay - Fades to 0.7 opacity */}

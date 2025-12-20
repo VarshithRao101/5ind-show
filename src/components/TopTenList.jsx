@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getPosterUrl } from '../config/tmdbImage';
+import { getPoster } from '../utils/poster';
 
 const TopTenList = ({ movies = [] }) => {
     const navigate = useNavigate();
@@ -38,7 +38,7 @@ const TopTenList = ({ movies = [] }) => {
 
                                 <div className="z-10 relative shadow-2xl rounded-lg overflow-hidden border border-white/10 w-[140px] aspect-[2/3]">
                                     <img
-                                        src={getPosterUrl(movie.poster_path)}
+                                        src={getPoster(movie.poster_path)}
                                         alt={movie.title}
                                         className="w-full h-full object-cover"
                                         loading="lazy"
