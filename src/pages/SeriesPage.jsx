@@ -46,10 +46,20 @@ export default function SeriesPage() {
                 // Parallel Fetch for Speed
                 const [tvData, provData, creditsData, similarData] = await Promise.all([
                     getTvDetails(id),
-                    getProviders("tv", id, "IN"),
+                    getProviders("tv", id, "IN"), // Keeps this call but we need to handle the data logic manually if getProviders is deprecated or we access raw
                     getCredits("tv", id),
                     getSimilarSeries(id)
                 ]);
+
+                // Correction: The `getProviders` helper in tmdb.js returns null (deprecated). 
+                // We must use getWatchProviders(id, 'tv') directly as done in MovieDetails.
+                const watchProvRes = await getTvDetails(id).then(d => d['watch/providers'] || {}); // Actually getTvDetails appends it.
+                // Or better, let's just make a specific call if not available.
+                // But wait, getTvDetails includes append_to_response "watch/providers".
+
+                // Let's refactor to use the data from tvData if possible or a separate call if needed.
+                // The `tvData` response from `getTvDetails` ALREADY has `watch/providers` appended. 
+                // Let's access it from there.
 
                 if (!mounted) return;
 
@@ -59,7 +69,11 @@ export default function SeriesPage() {
                 }
 
                 setTv(tvData);
-                setProviders(provData);
+
+                const allProviders = tvData['watch/providers']?.results || {};
+                const flatrateProviders = allProviders.IN?.flatrate || allProviders.US?.flatrate || [];
+                setProviders(flatrateProviders);
+
                 setCast(creditsData?.cast?.slice(0, 15) || []);
                 setSimilar(similarData?.data?.results?.slice(0, 12) || []);
 
@@ -214,25 +228,25 @@ export default function SeriesPage() {
                     </div>
 
                     {/* Where to Watch */}
-                    {providers && (providers.flatrate || providers.rent) && (
+                    {providers && providers.length > 0 ? (
                         <div className="bg-[#181818] p-5 rounded-2xl border border-white/5 shadow-xl">
-                            <h3 className="text-xs font-bold font-mono text-gray-500 mb-4 tracking-widest uppercase">Streaming On</h3>
-                            {providers?.flatrate ? (
-                                <div className="flex flex-wrap gap-3">
-                                    {providers.flatrate.map(p => (
-                                        <a key={p.provider_id} href="https://www.justwatch.com" target="_blank" rel="noreferrer" className="block transition-transform hover:scale-110">
-                                            <img
-                                                src={`https://image.tmdb.org/t/p/w185${p.logo_path}`}
-                                                alt={p.provider_name}
-                                                className="w-12 h-12 rounded-xl shadow-md"
-                                                title={p.provider_name}
-                                            />
-                                        </a>
-                                    ))}
-                                </div>
-                            ) : (
-                                <div className="text-sm text-gray-500 italic">Not available to stream.</div>
-                            )}
+                            <h3 className="text-xs font-bold font-mono text-gray-500 mb-4 tracking-widest uppercase">Available On</h3>
+                            <div className="flex flex-wrap gap-3">
+                                {providers.map(p => (
+                                    <div key={p.provider_id} className="block transition-transform hover:scale-110">
+                                        <img
+                                            src={`https://image.tmdb.org/t/p/w92${p.logo_path}`}
+                                            alt={p.provider_name}
+                                            className="w-12 h-12 rounded-xl shadow-md"
+                                            title={p.provider_name}
+                                        />
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="bg-[#181818] p-5 rounded-2xl border border-white/5 shadow-xl text-sm text-gray-500 italic">
+                            Not available for streaming currently
                         </div>
                     )}
                 </div>

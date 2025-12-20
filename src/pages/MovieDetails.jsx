@@ -89,11 +89,11 @@ export default function MovieDetails() {
                 const trailer = allVideos.find(v => v.type === "Trailer" && v.site === "YouTube") || allVideos.find(v => v.site === "YouTube");
                 setTrailerKey(trailer?.key || null);
 
-                // Providers (Fix: use getWatchProviders and prioritize IN flatrate)
+                // Providers (Fix: use getWatchProviders and prioritize IN flatrate, fallback to US)
                 try {
                     const provRes = await getWatchProviders(id, mediaType);
                     const allProviders = provRes.data?.results || {};
-                    const inProviders = allProviders.IN?.flatrate || [];
+                    const inProviders = allProviders.IN?.flatrate || allProviders.US?.flatrate || [];
                     setProviders(inProviders);
                 } catch (err) {
                     console.error("Provider fetch error", err);
@@ -424,26 +424,19 @@ export default function MovieDetails() {
                                 {providers && providers.length > 0 ? (
                                     <div className="flex flex-wrap gap-3">
                                         {providers.map((p) => (
-                                            <a
-                                                key={p.provider_id}
-                                                href={`https://www.themoviedb.org/movie/${details.id}/watch?locale=IN`}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                className="block transition-transform hover:scale-105"
-                                            >
+                                            <div key={p.provider_id} className="block transition-transform hover:scale-105">
                                                 <img
-                                                    src={getProviderLogo(p.logo_path)}
+                                                    src={`https://image.tmdb.org/t/p/w92${p.logo_path}`}
                                                     alt={p.provider_name}
                                                     title={p.provider_name}
-                                                    loading="lazy"
                                                     className="w-12 h-12 rounded-lg bg-white/10"
                                                 />
-                                            </a>
+                                            </div>
                                         ))}
                                     </div>
                                 ) : (
                                     <div className="text-sm text-gray-500 italic">
-                                        Not available for streaming
+                                        Not available for streaming currently
                                     </div>
                                 )}
                             </div>
