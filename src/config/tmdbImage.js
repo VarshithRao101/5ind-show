@@ -1,8 +1,8 @@
 export const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p/";
 export const POSTER_SIZES = {
-    SMALL: "w342",
-    MEDIUM: "w500",
-    LARGE: "w780"
+    SMALL: "w185",
+    MEDIUM: "w342",
+    LARGE: "w500"
 };
 
 export const getPosterUrl = (path, size = POSTER_SIZES.MEDIUM) => {

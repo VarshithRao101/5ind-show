@@ -10,7 +10,7 @@ const EpisodeModal = ({ isOpen, episode, seasonNumber, onClose }) => {
   if (!episode) return null;
 
   const stillUrl = episode.still_path
-    ? `https://image.tmdb.org/t/p/w780${episode.still_path}`
+    ? `https://image.tmdb.org/t/p/w500${episode.still_path}`
     : '/assets/placeholder-episode.png';
 
   return (
@@ -31,9 +31,8 @@ const EpisodeModal = ({ isOpen, episode, seasonNumber, onClose }) => {
             initial={{ opacity: 0, scale: 0.9, y: 20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.9, y: 20 }}
-            className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl ${
-              darkTheme ? 'bg-gray-900' : 'bg-white'
-            }`}
+            className={`fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 w-full max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl ${darkTheme ? 'bg-gray-900' : 'bg-white'
+              }`}
           >
             {/* Close Button */}
             <button
@@ -58,25 +57,23 @@ const EpisodeModal = ({ isOpen, episode, seasonNumber, onClose }) => {
             {/* Content */}
             <div className="p-6 sm:p-8">
               {/* Title */}
-              <h2 className={`text-2xl sm:text-3xl font-bold mb-2 ${
-                darkTheme ? 'text-white' : 'text-gray-900'
-              }`}>
+              <h2 className={`text-2xl sm:text-3xl font-bold mb-2 ${darkTheme ? 'text-white' : 'text-gray-900'
+                }`}>
                 S{String(seasonNumber || '?').padStart(2, '0')} • E{String(episode.episode_number || '?').padStart(2, '0')} — {episode.name || 'Untitled Episode'}
               </h2>
 
               {/* Meta Information */}
-              <div className={`flex flex-wrap gap-4 mb-6 pb-4 border-b ${
-                darkTheme ? 'border-gray-700 text-gray-400' : 'border-gray-200 text-gray-600'
-              }`}>
+              <div className={`flex flex-wrap gap-4 mb-6 pb-4 border-b ${darkTheme ? 'border-gray-700 text-gray-400' : 'border-gray-200 text-gray-600'
+                }`}>
                 <div>
                   <p className="text-xs font-semibold mb-1">Air Date</p>
                   <p className={darkTheme ? 'text-white' : 'text-gray-900'}>
                     {episode.air_date
                       ? new Date(episode.air_date).toLocaleDateString('en-US', {
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric',
-                        })
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })
                       : 'Unknown air date'}
                   </p>
                 </div>
@@ -100,14 +97,12 @@ const EpisodeModal = ({ isOpen, episode, seasonNumber, onClose }) => {
 
               {/* Overview */}
               <div className="mb-6">
-                <h3 className={`text-lg font-bold mb-2 ${
-                  darkTheme ? 'text-white' : 'text-gray-900'
-                }`}>
+                <h3 className={`text-lg font-bold mb-2 ${darkTheme ? 'text-white' : 'text-gray-900'
+                  }`}>
                   Overview
                 </h3>
-                <p className={`leading-relaxed ${
-                  darkTheme ? 'text-gray-300' : 'text-gray-700'
-                }`}>
+                <p className={`leading-relaxed ${darkTheme ? 'text-gray-300' : 'text-gray-700'
+                  }`}>
                   {episode.overview || 'No overview available.'}
                 </p>
               </div>

@@ -144,8 +144,8 @@ export default function SeriesPage() {
         </div>
     );
 
-    const backdrop = tv.backdrop_path ? `https://image.tmdb.org/t/p/original${tv.backdrop_path}` : null;
-    const poster = tv.poster_path ? `https://image.tmdb.org/t/p/w500${tv.poster_path}` : null;
+    const backdrop = tv.backdrop_path ? `https://image.tmdb.org/t/p/w500${tv.backdrop_path}` : null;
+    const poster = tv.poster_path ? `https://image.tmdb.org/t/p/w342${tv.poster_path}` : null;
 
     return (
         <div className="min-h-screen bg-[#0f0f0f] text-white pb-20 font-sans">
@@ -221,7 +221,7 @@ export default function SeriesPage() {
                                     {providers.flatrate.map(p => (
                                         <a key={p.provider_id} href="https://www.justwatch.com" target="_blank" rel="noreferrer" className="block transition-transform hover:scale-110">
                                             <img
-                                                src={`https://image.tmdb.org/t/p/original${p.logo_path}`}
+                                                src={`https://image.tmdb.org/t/p/w185${p.logo_path}`}
                                                 alt={p.provider_name}
                                                 className="w-12 h-12 rounded-xl shadow-md"
                                                 title={p.provider_name}

@@ -23,7 +23,7 @@ const HeroSlide = ({ movie }) => {
     const navigate = useNavigate();
     const { addToWatchlist, removeFromWatchlist, checkIfInWatchlist } = useContext(WatchlistContext);
     const inList = checkIfInWatchlist(movie?.id);
-    const background = movie?.backdrop_path ? `https://image.tmdb.org/t/p/original${movie.backdrop_path}` : getPosterUrl(movie?.poster_path, 'original');
+    const background = movie?.backdrop_path ? `https://image.tmdb.org/t/p/w500${movie.backdrop_path}` : getPosterUrl(movie?.poster_path, 'w342');
 
     if (!movie) return null;
 
@@ -135,46 +135,68 @@ export default function HomePage() {
             if (cached) {
                 const data = JSON.parse(cached);
                 if (Date.now() - data.timestamp < 3600000) {
+                    // 1. Critical IO (Cache)
                     setTrending(data.trending);
-                    setTopRated(data.topRated);
-                    setNowPlaying(data.nowPlaying);
                     setIndiaTop(data.indiaTop);
                     if (data.trending.length > 0) {
                         setHeroMovie(data.trending[Math.floor(Math.random() * Math.min(6, data.trending.length))]);
                     }
                     setLoading(false);
+
+                    // 2. Deferred IO (Cache)
+                    setTimeout(() => {
+                        if (mounted) {
+                            setTopRated(data.topRated);
+                            setNowPlaying(data.nowPlaying);
+                        }
+                    }, 500);
                     return;
                 }
             }
 
             try {
-                const [trend, top, now, ind] = await Promise.all([
+                // 1. Critical Network Request (Top India + Trending)
+                const [trend, ind] = await Promise.all([
                     getTrendingAll(1),
-                    getTopRatedMovies(1),
-                    getNowPlayingMovies(1),
                     getTopIndiaMovies(10)
                 ]);
 
                 if (mounted) {
                     setTrending(trend);
-                    setTopRated(top);
-                    setNowPlaying(now);
                     setIndiaTop(ind);
                     if (trend.length > 0) {
                         setHeroMovie(trend[Math.floor(Math.random() * Math.min(6, trend.length))]);
                     }
-
-                    sessionStorage.setItem('homeData_v2', JSON.stringify({
-                        timestamp: Date.now(),
-                        trending: trend,
-                        topRated: top,
-                        nowPlaying: now,
-                        indiaTop: ind
-                    }));
+                    setLoading(false); // Render Critical Content First
                 }
+
+                // 2. Deferred Network Request (Critically Acclaimed + Now Playing)
+                // Delayed to prioritize mobile rendering performance
+                setTimeout(async () => {
+                    if (!mounted) return;
+                    try {
+                        const [top, now] = await Promise.all([
+                            getTopRatedMovies(1),
+                            getNowPlayingMovies(1)
+                        ]);
+                        if (mounted) {
+                            setTopRated(top);
+                            setNowPlaying(now);
+
+                            // Update Cache with Full Data
+                            sessionStorage.setItem('homeData_v2', JSON.stringify({
+                                timestamp: Date.now(),
+                                trending: trend,
+                                indiaTop: ind,
+                                topRated: top,
+                                nowPlaying: now
+                            }));
+                        }
+                    } catch (err) { console.error("Deferred fetch failed", err); }
+                }, 1500);
+
             } catch (error) {
                 console.error("Home load failed", error);
-            } finally {
                 if (mounted) setLoading(false);
             }
         };
@@ -277,11 +299,19 @@ export default function HomePage() {
                         {/* 2. Trending */}
                         <MovieSlider title="Trending Now" movies={trending} />
 
-                        {/* 3. Critically Acclaimed */}
-                        <MovieSlider title="Critically Acclaimed" movies={topRated} />
+                        {/* 3. Critically Acclaimed (Deferred) */}
+                        <div className={`transition-opacity duration-1000 ${topRated.length > 0 ? 'opacity-100' : 'opacity-0 h-0'}`}>
+                            {topRated.length > 0 && (
+                                <MovieSlider title="Critically Acclaimed" movies={topRated} />
+                            )}
+                        </div>
 
-                        {/* 4. Recommended For You */}
-                        <MovieSlider title="Recommended For You" movies={nowPlaying} />
+                        {/* 4. Recommended For You (Deferred) */}
+                        <div className={`transition-opacity duration-1000 ${nowPlaying.length > 0 ? 'opacity-100' : 'opacity-0 h-0'}`}>
+                            {nowPlaying.length > 0 && (
+                                <MovieSlider title="Recommended For You" movies={nowPlaying} />
+                            )}
+                        </div>
                     </div>
                 )}
             </div>

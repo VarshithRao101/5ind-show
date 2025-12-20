@@ -18,7 +18,7 @@ const PROFILE_PLACEHOLDER = "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/
  * @param {string} size - Image size (w92, w154, w185, w342, w500, w780, original)
  * @returns {string} Full poster URL or placeholder
  */
-export function posterUrl(path, size = "w500") {
+export function posterUrl(path, size = "w342") {
   if (!path) {
     console.warn('⚠️ Missing poster_path for movie');
     return POSTER_PLACEHOLDER;
@@ -32,7 +32,7 @@ export function posterUrl(path, size = "w500") {
  * @param {string} size - Image size (w300, w780, w1280, original)
  * @returns {string} Full backdrop URL or placeholder
  */
-export function backdropUrl(path, size = "original") {
+export function backdropUrl(path, size = "w500") {
   if (!path) {
     console.warn('⚠️ Missing backdrop_path for movie');
     return BACKDROP_PLACEHOLDER;

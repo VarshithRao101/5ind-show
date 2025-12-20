@@ -131,7 +131,7 @@ export default function MovieDetails() {
 
     const title = details.title || details.name;
     const backdrop = backdropUrl(details.backdrop_path);
-    const poster = getPosterUrl(details.poster_path, "w500");
+    const poster = getPosterUrl(details.poster_path, "w342");
     const year = (details.release_date || details.first_air_date || "").slice(0, 4);
     const runtime = details.runtime ? `${Math.floor(details.runtime / 60)}h ${details.runtime % 60}m` : null;
     const inList = checkIfInWatchlist(details.id);

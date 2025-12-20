@@ -62,7 +62,7 @@ export default function ActorPage() {
                 <div className="flex-shrink-0 mx-auto md:mx-0">
                     <div className="w-64 h-96 rounded-xl overflow-hidden shadow-2xl border border-white/10">
                         <img
-                            src={details.profile_path ? `https://image.tmdb.org/t/p/w500${details.profile_path}` : "https://via.placeholder.com/500x750?text=No+Image"}
+                            src={details.profile_path ? `https://image.tmdb.org/t/p/h632${details.profile_path}` : "https://via.placeholder.com/500x750?text=No+Image"}
                             alt={details.name}
                             className="w-full h-full object-cover"
                         />
