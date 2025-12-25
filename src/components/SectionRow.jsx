@@ -2,6 +2,7 @@ import React, { useRef, useState, memo } from 'react';
 import { motion } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight } from 'react-icons/fi';
 import MovieCard from './MovieCard';
+import { getGenreName } from '../utils/genreMap';
 
 const SectionRow = memo(({ title, movies, onMovieClick }) => {
   const scrollContainerRef = useRef(null);
@@ -67,7 +68,12 @@ const SectionRow = memo(({ title, movies, onMovieClick }) => {
               className="flex-shrink-0 w-40 sm:w-48"
             >
               <MovieCard
-                movie={movie}
+                id={movie.id}
+                title={movie.title || movie.name}
+                posterPath={movie.poster_path}
+                rating={movie.vote_average ? movie.vote_average.toFixed(1) : "NR"}
+                genre={getGenreName(movie.genre_ids?.[0])}
+                year={(movie.release_date || movie.first_air_date || "").substring(0, 4)}
                 onClick={() => onMovieClick?.(movie)}
               />
             </div>

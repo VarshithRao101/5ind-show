@@ -29,27 +29,17 @@ const MovieCard = memo(({
     if (onNavigate) onNavigate();
   };
 
-  // Animation Variants (Mobile Safe)
-  const containerVariants = {
-    rest: {
-      y: 0,
-      boxShadow: isMobile ? "none" : "0 4px 6px rgba(0, 0, 0, 0.1)"
-    },
-    hover: {
-      y: isMobile ? 0 : -8,
-      boxShadow: isMobile ? "none" : "0 10px 15px -3px rgba(0, 0, 0, 0.4)",
-      transition: { duration: 0.3, ease: "easeOut" }
-    },
+  // Animation Variants
+  const rankedCardVariants = {
+    rest: { y: 0, scale: 1, boxShadow: "0 4px 6px rgba(0,0,0,0.1)" },
+    hover: { y: -8, scale: 1, boxShadow: "0 10px 15px rgba(0,0,0,0.4)", transition: { duration: 0.3 } },
     tap: { scale: 0.98 }
   };
 
-  const overlayVariants = {
-    rest: { opacity: 0 },
-    hover: {
-      opacity: isMobile ? 1 : 1,
-      opacity: 1, // Simplified as decided
-      transition: { duration: 0.2, ease: "easeOut" }
-    }
+  const standardCardVariants = {
+    rest: { y: 0 },
+    hover: { y: -8, transition: { duration: 0.3 } },
+    tap: { scale: 0.98 }
   };
 
   // ----------------------------------------------------------------
@@ -78,7 +68,7 @@ const MovieCard = memo(({
         {/* Card Itself (Shifted Right) */}
         <motion.div
           className="relative z-10 w-[160px] aspect-[2/3] bg-[#121212] rounded-xl overflow-hidden ml-auto border border-white/10 shadow-lg"
-          variants={containerVariants}
+          variants={rankedCardVariants}
           initial="rest"
           whileHover="hover"
           whileTap="tap"
@@ -91,15 +81,9 @@ const MovieCard = memo(({
             onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_POSTER; }}
           />
 
-          <motion.div
-            className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent"
-            variants={{ rest: { opacity: 0 }, hover: { opacity: 0.8, transition: { duration: 0.2 } } }}
-          />
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent opacity-90" />
 
-          <motion.div
-            className="absolute inset-0 p-4 flex flex-col justify-end items-center text-center z-20"
-            variants={overlayVariants}
-          >
+          <div className="absolute inset-0 p-4 flex flex-col justify-end items-center text-center z-20">
             <h4 className="text-white font-bold text-sm leading-tight line-clamp-2 mb-1">
               {title}
             </h4>
@@ -108,90 +92,66 @@ const MovieCard = memo(({
             <div className="flex items-center gap-1 text-[#FFD400] text-xs font-medium mb-3">
               <FiStar fill="#FFD400" /> {rating}
             </div>
-
-            <button className="bg-black/60 hover:bg-[#FFD400] hover:text-black text-white text-[10px] font-semibold py-1.5 px-3 rounded-full transition-colors duration-200 w-full">
-              View Details
-            </button>
-          </motion.div>
+          </div>
         </motion.div>
       </div>
     );
   }
 
-
-
-
+  // ----------------------------------------------------------------
+  // STANDARD CARD LAYOUT (Text Below Image)
+  // ----------------------------------------------------------------
   return (
     <motion.div
-      className="relative w-[160px] sm:w-[170px] aspect-[2/3] bg-[#121212] rounded-xl overflow-hidden cursor-pointer shadow-md border border-white/5"
-      variants={containerVariants}
+      className="relative flex flex-col gap-3 w-[160px] sm:w-[170px] cursor-pointer group mb-2"
+      variants={standardCardVariants}
       initial="rest"
       whileHover="hover"
       whileTap="tap"
       onClick={handleCardClick}
     >
-      {/* Poster with Zoom */}
-      <img
-        src={getPosterUrl(posterPath, isMobile)}
-        alt={title}
-        className="w-full h-full object-cover rounded-xl"
-        loading="lazy"
-        onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_POSTER; }}
-      />
+      {/* Poster Image Container */}
+      <div className="relative aspect-[2/3] w-full bg-[#121212] rounded-xl overflow-hidden shadow-md border border-white/5 group-hover:shadow-2xl transition-all duration-300">
+        <img
+          src={getPosterUrl(posterPath, isMobile)}
+          alt={title}
+          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          loading="lazy"
+          onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_POSTER; }}
+        />
 
-      {/* Dark Gradient Overlay - Fades to 0.7 opacity */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-t from-black via-black/60 to-transparent pointer-events-none"
-        variants={{
-          rest: { opacity: 0 },
-          hover: { opacity: 0.9, transition: { duration: 0.2 } }
-        }}
-      />
+        {/* Watchlist Button */}
+        <div
+          role="button"
+          tabIndex={0}
+          className={`absolute top-2 right-2 p-1.5 rounded-full backdrop-blur-md border border-white/10 z-30 shadow-lg transition-colors duration-200
+            ${isInWatchlist ? 'bg-[#FFD400] text-black' : 'bg-black/40 text-white hover:bg-[#FFD400] hover:text-black'}
+          `}
+          onClick={handleWatchlistToggle}
+        >
+          {isInWatchlist ? <FiCheck size={12} /> : <FiPlus size={12} />}
+        </div>
+      </div>
 
-      {/* Content Overlay */}
-      <motion.div
-        className="absolute inset-0 p-3 z-20 flex flex-col justify-end items-start"
-        variants={overlayVariants}
-      >
-        {/* Title */}
-        <h4 className="text-white font-bold text-sm leading-tight line-clamp-2 drop-shadow-md mb-1 w-full text-left">
+      {/* Details Below Poster */}
+      <div className="flex flex-col px-0.5 space-y-1">
+        <h4 className="text-gray-100 font-bold text-[13px] leading-tight line-clamp-2 group-hover:text-[#FFD400] transition-colors duration-200">
           {title}
         </h4>
-
-        {/* Rating & Genre */}
-        <div className="flex items-center justify-between w-full text-xs text-gray-300 font-medium mb-3">
-          <span className="flex items-center gap-1 text-[#FFD400]">
-            <FiStar size={10} fill="#FFD400" /> {rating}
-          </span>
-          <span className="opacity-80 truncate max-w-[80px] text-right">
-            {genre}
-          </span>
+        <div className="flex items-center justify-between text-[11px] text-gray-400 font-medium">
+          <div className="flex items-center gap-2">
+            {rating && rating !== "N/A" && rating !== "NR" && (
+              <>
+                <span className="flex items-center gap-1 text-[#FFD400]">
+                  <FiStar size={10} fill="#FFD400" /> {rating}
+                </span>
+                <span className="text-gray-600">•</span>
+              </>
+            )}
+            <span className="truncate max-w-[80px]">{genre}</span>
+          </div>
         </div>
-
-        {/* View Details Button */}
-        <div className="w-full">
-          <button className="w-full bg-white/10 hover:bg-[#FFD400] hover:text-black border border-white/20 text-white text-xs font-semibold py-2 rounded-lg transition-colors duration-200">
-            View Details
-          </button>
-        </div>
-      </motion.div>
-
-      {/* Watchlist Button */}
-      <motion.div
-        role="button"
-        tabIndex={0}
-        className={`absolute top-2 right-2 p-2 rounded-full border border-white/10 shadow-lg z-30 transition-colors
-          ${isInWatchlist ? 'bg-[#FFD400] text-black' : 'bg-black/60 text-white hover:bg-[#FFD400] hover:text-black'}
-        `}
-        variants={{
-          rest: { opacity: isInWatchlist ? 1 : 0, scale: 0.8 },
-          hover: { opacity: 1, scale: 1, transition: { duration: 0.2 } }
-        }}
-        onClick={handleWatchlistToggle}
-      >
-        {isInWatchlist ? <FiCheck size={14} /> : <FiPlus size={14} />}
-      </motion.div>
-
+      </div>
     </motion.div>
   );
 });
