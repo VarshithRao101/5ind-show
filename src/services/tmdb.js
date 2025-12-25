@@ -9,7 +9,7 @@ const tmdb = axios.create({
   params: {
     language: 'en-US',
   },
-  timeout: 15000,
+  timeout: 5000,
 });
 
 tmdb.interceptors.request.use((config) => {
@@ -83,8 +83,10 @@ export async function getMovieDetails(type = "movie", id) {
 // convenience: similar (array)
 export async function getSimilarMovies(type = "movie", id, limit = 12) {
   if (!id) return [];
-  const res = await tmdb.get(`/${type}/${id}/similar`, { params: { page: 1 } });
-  return (res.data?.results || []).slice(0, limit);
+  try {
+    const res = await tmdb.get(`/${type}/${id}/similar`, { params: { page: 1 } });
+    return (res.data?.results || []).slice(0, limit);
+  } catch (e) { return []; }
 }
 
 // ---------------------------------------------------------
@@ -101,8 +103,10 @@ export const getWatchProviders = (id, type = "movie") =>
 // credits (cast + crew)
 export async function getCredits(type = "movie", id) {
   if (!id) return null;
-  const res = await tmdb.get(`/${type}/${id}/credits`);
-  return res.data || null;
+  try {
+    const res = await tmdb.get(`/${type}/${id}/credits`);
+    return res.data || null;
+  } catch (e) { return { cast: [], crew: [] }; }
 }
 
 // If type === "tv": fetch episode details for specific season/episode
@@ -634,11 +638,13 @@ export async function getTvDetails(tvId) {
   const key = `tv_details_${tvId}`;
   const c = cache.get(key);
   if (c) return c;
-  const res = await tmdb.get(`/tv/${tvId}`, {
-    params: { append_to_response: "videos,credits,similar,recommendations,watch/providers", language: "en-US" }
-  });
-  cache.set(key, res.data, 900);
-  return res.data;
+  try {
+    const res = await tmdb.get(`/tv/${tvId}`, {
+      params: { append_to_response: "videos,credits,similar,recommendations,watch/providers", language: "en-US" }
+    });
+    cache.set(key, res.data, 900);
+    return res.data;
+  } catch (e) { return null; }
 }
 
 /**
@@ -649,11 +655,13 @@ export async function getSeasonDetails(tvId, seasonNumber) {
   const key = `tv_${tvId}_season_${seasonNumber}`;
   const c = cache.get(key);
   if (c) return c;
-  const res = await tmdb.get(`/tv/${tvId}/season/${seasonNumber}`, {
-    params: { append_to_response: "videos,credits", language: "en-US" }
-  });
-  cache.set(key, res.data, 900);
-  return res.data;
+  try {
+    const res = await tmdb.get(`/tv/${tvId}/season/${seasonNumber}`, {
+      params: { append_to_response: "videos,credits", language: "en-US" }
+    });
+    cache.set(key, res.data, 900);
+    return res.data;
+  } catch (e) { return null; }
 }
 
 /**
@@ -664,11 +672,13 @@ export async function getEpisodeDetails(tvId, seasonNumber, episodeNumber) {
   const key = `tv_${tvId}_s${seasonNumber}_e${episodeNumber}`;
   const c = cache.get(key);
   if (c) return c;
-  const res = await tmdb.get(`/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}`, {
-    params: { append_to_response: "videos,credits", language: "en-US" }
-  });
-  cache.set(key, res.data, 900);
-  return res.data;
+  try {
+    const res = await tmdb.get(`/tv/${tvId}/season/${seasonNumber}/episode/${episodeNumber}`, {
+      params: { append_to_response: "videos,credits", language: "en-US" }
+    });
+    cache.set(key, res.data, 900);
+    return res.data;
+  } catch (e) { return null; }
 }
 
 // ...existing code...
@@ -681,43 +691,53 @@ export async function getEpisodeDetails(tvId, seasonNumber, episodeNumber) {
 
 // 2. Top Rated Movies
 export async function getTopRatedMovies(page = 1) {
-  const res = await tmdb.get("/movie/top_rated", { params: { page, region: 'IN' } });
-  return res.data?.results || [];
+  try {
+    const res = await tmdb.get("/movie/top_rated", { params: { page, region: 'IN' } });
+    return res.data?.results || [];
+  } catch (e) { return []; }
 }
 
 // 3. Popular TV - Using existing export at top
 
 // 4. Upcoming Movies
 export async function getUpcomingMovies(page = 1) {
-  const res = await tmdb.get("/movie/upcoming", { params: { page, region: 'IN' } });
-  return res.data?.results || [];
+  try {
+    const res = await tmdb.get("/movie/upcoming", { params: { page, region: 'IN' } });
+    return res.data?.results || [];
+  } catch (e) { return []; }
 }
 
 // 5. Now Playing
 export async function getNowPlayingMovies(page = 1) {
-  const res = await tmdb.get("/movie/now_playing", { params: { page, region: 'IN' } });
-  return res.data?.results || [];
+  try {
+    const res = await tmdb.get("/movie/now_playing", { params: { page, region: 'IN' } });
+    return res.data?.results || [];
+  } catch (e) { return []; }
 }
 
 // 6. Discover by Language (Generic)
 export async function getMoviesByLanguage(langCode, sort = "popularity.desc", page = 1) {
-  const res = await tmdb.get("/discover/movie", {
-    params: {
-      with_original_language: langCode,
-      sort_by: sort,
-      page,
-      include_adult: false
-    }
-  });
-  return res.data?.results || [];
+  try {
+    const res = await tmdb.get("/discover/movie", {
+      params: {
+        with_original_language: langCode,
+        sort_by: sort,
+        page,
+        include_adult: false
+      }
+    });
+    return res.data?.results || [];
+  } catch (e) { return []; }
 }
 
 // 7. Person Details Extended
 export async function getPersonDetailsFull(personId) {
-  const res = await tmdb.get(`/person/${personId}`, {
-    params: { append_to_response: "combined_credits,external_ids,images" }
-  });
-  return res.data;
+  try {
+    const res = await tmdb.get(`/person/${personId}`, {
+      params: { append_to_response: "combined_credits,external_ids,images" }
+    });
+    return res.data;
+  } catch (e) { return null; }
 }
 
 export default tmdb;

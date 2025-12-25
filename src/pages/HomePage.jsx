@@ -130,78 +130,80 @@ export default function HomePage() {
 
     useEffect(() => {
         let mounted = true;
+
         const fetchData = async () => {
-            const cached = sessionStorage.getItem('homeData_v2');
-            if (cached) {
-                const data = JSON.parse(cached);
-                if (Date.now() - data.timestamp < 3600000) {
-                    // 1. Critical IO (Cache)
-                    setTrending(data.trending);
-                    setIndiaTop(data.indiaTop);
-                    if (data.trending.length > 0) {
-                        setHeroMovie(data.trending[Math.floor(Math.random() * Math.min(6, data.trending.length))]);
-                    }
-                    setLoading(false);
-
-                    // 2. Deferred IO (Cache)
-                    setTimeout(() => {
-                        if (mounted) {
-                            setTopRated(data.topRated);
-                            setNowPlaying(data.nowPlaying);
-                        }
-                    }, 500);
-                    return;
-                }
-            }
-
             try {
-                // 1. Critical Network Request (Top India + Trending)
-                const [trend, ind] = await Promise.all([
-                    getTrendingAll(1),
-                    getTopIndiaMovies(10)
+                const cached = sessionStorage.getItem('homeData_v2');
+                if (cached) {
+                    const data = JSON.parse(cached);
+                    // Cache validity: 1 hour
+                    if (Date.now() - data.timestamp < 3600000) {
+                        setTrending(data.trending);
+                        setIndiaTop(data.indiaTop);
+
+                        // Select random hero from top trending
+                        if (data.trending.length > 0) {
+                            setHeroMovie(data.trending[Math.floor(Math.random() * Math.min(6, data.trending.length))]);
+                        }
+                        setLoading(false);
+
+                        // Optimistically update deferred data from cache
+                        setTimeout(() => {
+                            if (mounted) {
+                                setTopRated(data.topRated);
+                                setNowPlaying(data.nowPlaying);
+                            }
+                        }, 100);
+                        return;
+                    }
+                }
+
+                // 1. Critical: Trending (Load First & Render)
+                const trend = await getTrendingAll(1);
+
+                if (!mounted) return;
+
+                setTrending(trend);
+                if (trend && trend.length > 0) {
+                    setHeroMovie(trend[Math.floor(Math.random() * Math.min(6, trend.length))]);
+                }
+
+                // UNBLOCK UI: Show Hero + Trending immediately
+                setLoading(false);
+
+                // 2. Secondary: Top India (Load Next)
+                const ind = await getTopIndiaMovies(10);
+                if (mounted) setIndiaTop(ind);
+
+                // 3. Deferred: Top Rated & Now Playing (Load Last)
+                const [top, now] = await Promise.all([
+                    getTopRatedMovies(1),
+                    getNowPlayingMovies(1)
                 ]);
 
                 if (mounted) {
-                    setTrending(trend);
-                    setIndiaTop(ind);
-                    if (trend.length > 0) {
-                        setHeroMovie(trend[Math.floor(Math.random() * Math.min(6, trend.length))]);
-                    }
-                    setLoading(false); // Render Critical Content First
+                    setTopRated(top);
+                    setNowPlaying(now);
+
+                    // Update Cache
+                    sessionStorage.setItem('homeData_v2', JSON.stringify({
+                        timestamp: Date.now(),
+                        trending: trend,
+                        indiaTop: ind,
+                        topRated: top,
+                        nowPlaying: now
+                    }));
                 }
-
-                // 2. Deferred Network Request (Critically Acclaimed + Now Playing)
-                // Delayed to prioritize mobile rendering performance
-                setTimeout(async () => {
-                    if (!mounted) return;
-                    try {
-                        const [top, now] = await Promise.all([
-                            getTopRatedMovies(1),
-                            getNowPlayingMovies(1)
-                        ]);
-                        if (mounted) {
-                            setTopRated(top);
-                            setNowPlaying(now);
-
-                            // Update Cache with Full Data
-                            sessionStorage.setItem('homeData_v2', JSON.stringify({
-                                timestamp: Date.now(),
-                                trending: trend,
-                                indiaTop: ind,
-                                topRated: top,
-                                nowPlaying: now
-                            }));
-                        }
-                    } catch (err) { console.error("Deferred fetch failed", err); }
-                }, 1500);
 
             } catch (error) {
                 console.error("Home load failed", error);
+                // Ensure we don't get stuck in loading state even if critical fetch fails
                 if (mounted) setLoading(false);
             }
         };
 
         fetchData();
+
         return () => { mounted = false; };
     }, []);
 
