@@ -1,26 +1,25 @@
-/*
-  GenreTypeCard.jsx
-  Reusable card to display a genre type in a grid.
-  Props: title, onClick
-*/
 import React from 'react';
+import { motion } from 'framer-motion';
+import { getGenreIcon } from '../assets/icons/genreIcons';
 
 const GenreTypeCard = ({ title, onClick }) => {
-  return (
-    <button
-      onClick={onClick}
-      className="w-full bg-[#1A1A1D] rounded-2xl py-6 px-4 flex items-center justify-center text-center transition-transform transform hover:scale-105 focus:scale-105 focus:outline-none focus:ring-2 focus:ring-[#E43737] shadow-sm hover:shadow-lg"
-      aria-label={`Open ${title} genre`}
-    >
-      <div className="relative w-full h-full flex items-center justify-center">
-        <div className="absolute inset-0 rounded-2xl bg-gradient-to-b from-black/5 to-transparent pointer-events-none" />
-        <span className="text-white text-base font-medium z-10">{String(title || 'Genre')}</span>
-      </div>
-    </button>
-  );
+    const Icon = getGenreIcon(title);
+
+    return (
+        <motion.button
+            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            onClick={onClick}
+            className="flex flex-col items-center justify-center p-6 bg-[#1f1f1f] border border-white/5 rounded-2xl hover:bg-white/10 hover:border-primary-yellow/30 transition-all group h-32 w-full"
+        >
+            <div className="w-10 h-10 mb-3 rounded-full bg-white/5 flex items-center justify-center text-primary-yellow group-hover:bg-primary-yellow group-hover:text-black transition-colors">
+                <Icon size={20} />
+            </div>
+            <span className="font-bold text-sm text-gray-200 group-hover:text-white truncate max-w-full">
+                {title}
+            </span>
+        </motion.button>
+    );
 };
 
 export default GenreTypeCard;
-
-
-

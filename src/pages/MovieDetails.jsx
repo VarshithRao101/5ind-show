@@ -2,9 +2,9 @@
 import React, { useEffect, useState, useCallback, useContext } from "react";
 import { isMobileDevice } from "../utils/isMobile";
 import { backdropUrl } from "../api/tmdbImages";
-import { getPoster } from "../utils/poster";
 import { getProviderLogo } from "../config/tmdbProviders";
-import { useParams, useNavigate } from "react-router-dom";
+import { POSTER_BASE, BACKDROP_BASE, PROFILE_BASE, LOGO_BASE, PLACEHOLDER_POSTER, PLACEHOLDER_PROFILE } from "../utils/imageConstants";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import {
     getMovieDetails,
     getWatchProviders,
@@ -15,13 +15,16 @@ import cache from "../utils/cache";
 import MovieSlider from "../components/MovieSlider";
 import TrailerModal from "../components/TrailerModal";
 import SmartImage from "../components/SmartImage";
-import { FiPlay, FiPlus, FiCheck, FiZap } from "react-icons/fi";
+import { FiPlay, FiPlus, FiCheck, FiZap, FiArrowLeft } from "react-icons/fi";
 import { WatchlistContext } from "../context/WatchlistContext";
 import SkeletonDetails from '../components/skeletons/SkeletonDetails';
+
+// DATA VISUAL FIX COMPLETE - PROMPT 4
 
 export default function MovieDetails() {
     const { id, type = "movie" } = useParams();
     const navigate = useNavigate();
+    const location = useLocation();
     const [details, setDetails] = useState(null);
     const [providers, setProviders] = useState(null);
     const [mobileProviders, setMobileProviders] = useState([]);
@@ -72,7 +75,7 @@ export default function MovieDetails() {
         setDetails(null);
         setRtScore(null);
         try {
-            const mediaType = window.location.pathname.includes("/tv/") ? "tv" : "movie";
+            const mediaType = location.pathname.includes("/tv/") ? "tv" : "movie";
             const data = await getMovieDetails(mediaType, id);
             setDetails(data || null);
 
@@ -111,7 +114,7 @@ export default function MovieDetails() {
                 }
 
                 // Similar
-                const sim = (data.similar?.results || await getSimilarMovies(mediaType, id, 12)).slice(0, 15);
+                const sim = (data.similar?.results || await getSimilarMovies(mediaType, id, 12)).slice(0, 12);
                 setSimilar(sim);
             }
         } catch (e) {
@@ -162,7 +165,7 @@ export default function MovieDetails() {
 
     const title = details?.title || details?.name;
     const backdrop = details ? backdropUrl(details.backdrop_path) : null;
-    const poster = details ? getPoster(details.poster_path) : null;
+    // const poster = details ? getPoster(details.poster_path) : null; // Removed
     const year = (details?.release_date || details?.first_air_date || "").slice(0, 4);
     const runtime = details?.runtime ? `${Math.floor(details.runtime / 60)}h ${details.runtime % 60}m` : null;
     const inList = checkIfInWatchlist(details?.id);
@@ -197,18 +200,26 @@ export default function MovieDetails() {
                         {backdrop && (
                             <div
                                 className="absolute inset-0 bg-cover bg-center animate-ken-burns"
-                                style={{ backgroundImage: `url(${backdrop})` }}
+                                style={{ backgroundImage: `url(${details.backdrop_path ? BACKDROP_BASE + details.backdrop_path : (details.poster_path ? POSTER_BASE + details.poster_path : PLACEHOLDER_POSTER)})` }}
                             >
                                 <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/50 to-transparent" />
                                 <div className="absolute inset-0 bg-gradient-to-r from-[#0f0f0f] via-[#0f0f0f]/80 to-transparent" />
                             </div>
                         )}
 
+                        <div className="absolute top-4 left-4 z-50">
+                            <button
+                                onClick={() => navigate(-1)}
+                                className="bg-black/50 hover:bg-primary-yellow hover:text-black text-white p-3 rounded-full backdrop-blur-md transition-all border border-white/10"
+                            >
+                                <FiArrowLeft size={24} />
+                            </button>
+                        </div>
                         <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-16 max-w-7xl mx-auto z-10">
                             <div className="flex flex-col md:flex-row gap-10 items-end">
                                 {/* Poster (Desktop) */}
                                 <div className="block w-72 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex-shrink-0 animate-fade-in-up">
-                                    <SmartImage src={poster} className="w-full h-full object-cover" />
+                                    <SmartImage src={details.poster_path ? POSTER_BASE + details.poster_path : PLACEHOLDER_POSTER} className="w-full h-full object-cover" />
                                 </div>
 
                                 <div className="flex-1 space-y-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
@@ -341,7 +352,7 @@ export default function MovieDetails() {
                                             >
                                                 <div className={`aspect-[2/3] rounded-xl overflow-hidden mb-3 border-2 transition-colors ${isActive ? 'border-primary-yellow shadow-[0_0_20px_rgba(245,197,24,0.3)]' : 'border-transparent group-hover:border-white/30'}`}>
                                                     <SmartImage
-                                                        src={getPoster(season.poster_path)}
+                                                        src={season.poster_path ? POSTER_BASE + season.poster_path : PLACEHOLDER_POSTER}
                                                         className="w-full h-full object-cover"
                                                     />
                                                 </div>
@@ -414,7 +425,7 @@ export default function MovieDetails() {
                                 <h3 className="text-2xl font-bold font-heading">Top Cast</h3>
                             </div>
                             <div className="flex gap-6 overflow-x-auto pb-8 scrollbar-thin scrollbar-thumb-zinc-700 scrollbar-track-transparent p-1">
-                                {(details?.credits?.cast || []).slice(0, 12).map(person => (
+                                {(details?.credits?.cast || []).slice(0, 10).map(person => (
                                     <div
                                         key={person?.id}
                                         className="w-32 md:w-36 flex-shrink-0 group cursor-pointer"
@@ -422,7 +433,7 @@ export default function MovieDetails() {
                                     >
                                         <div className="w-32 h-32 md:w-36 md:h-36 rounded-full overflow-hidden mb-4 border-2 border-white/5 group-hover:border-primary-yellow transition-all shadow-lg group-hover:shadow-[0_0_20px_rgba(245,197,24,0.3)]">
                                             <SmartImage
-                                                src={person?.profile_path ? `https://image.tmdb.org/t/p/w185${person.profile_path}` : null}
+                                                src={person?.profile_path ? PROFILE_BASE + person.profile_path : PLACEHOLDER_PROFILE}
                                                 className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
                                             />
                                         </div>
@@ -488,14 +499,22 @@ export default function MovieDetails() {
                                         {providers && providers.length > 0 ? (
                                             <div className="flex flex-wrap gap-3">
                                                 {providers.map((p) => (
-                                                    <div key={p.provider_id} className="block transition-transform hover:scale-105">
+                                                    <a
+                                                        key={p.provider_id}
+                                                        href={`https://www.google.com/search?q=${p.provider_name}+${title}+watch`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="block transition-transform hover:scale-105"
+                                                    >
                                                         <img
-                                                            src={`https://image.tmdb.org/t/p/w92${p.logo_path}`}
+                                                            src={p.logo_path ? LOGO_BASE + p.logo_path : PLACEHOLDER_POSTER}
                                                             alt={p.provider_name}
                                                             title={p.provider_name}
                                                             className="w-12 h-12 rounded-lg bg-white/10"
+                                                            loading="lazy"
+                                                            onError={(e) => { e.target.style.display = 'none'; }}
                                                         />
-                                                    </div>
+                                                    </a>
                                                 ))}
                                             </div>
                                         ) : (

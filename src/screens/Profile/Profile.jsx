@@ -2,7 +2,7 @@ import React, { useContext, useCallback, useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  FiFilm, FiBell, FiClock, FiMoon, FiGlobe, FiHelpCircle,
+  FiBell, FiClock, FiMoon, FiGlobe, FiHelpCircle,
   FiLock, FiInfo, FiLogOut, FiEdit2, FiX, FiSave,
 } from 'react-icons/fi';
 import SettingsRow from '../../components/SettingsRow';
@@ -137,12 +137,6 @@ const Profile = () => {
                 title="Edit Profile"
                 subtitle="Update avatar & personal info"
                 onClick={handleEditProfile}
-              />
-              <SettingsRow
-                icon={FiFilm}
-                title="Browse Genres"
-                subtitle="Explore all movie categories"
-                onClick={() => navigate('/genres')}
               />
               <SettingsRow
                 icon={FiClock}

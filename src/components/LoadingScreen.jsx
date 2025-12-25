@@ -1,6 +1,17 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const LoadingScreen = () => {
+    const [showTimeoutMsg, setShowTimeoutMsg] = React.useState(false);
+
+    React.useEffect(() => {
+        const timer = setTimeout(() => {
+            setShowTimeoutMsg(true);
+        }, 6000); // 6s timeout
+
+        return () => clearTimeout(timer);
+    }, []);
+
     return (
         <div className="fixed inset-0 z-[9999] flex flex-col items-center justify-center bg-[#121212]">
             {/* Animated Logo/Spinner Container */}
@@ -19,11 +30,30 @@ const LoadingScreen = () => {
             </div>
 
             {/* Loading Text */}
-            <div className="mt-8 flex items-center space-x-1">
-                <span className="text-xl font-medium tracking-[0.2em] text-[#888]">LOADING</span>
-                <span className="animate-bounce text-xl font-bold text-[#FFD400] delay-75">.</span>
-                <span className="animate-bounce text-xl font-bold text-[#FFD400] delay-150">.</span>
-                <span className="animate-bounce text-xl font-bold text-[#FFD400] delay-300">.</span>
+            <div className="mt-8 flex flex-col items-center space-y-2">
+                <div className="flex items-center space-x-1">
+                    <span className="text-xl font-medium tracking-[0.2em] text-[#888]">LOADING</span>
+                    <span className="animate-bounce text-xl font-bold text-[#FFD400] delay-75">.</span>
+                    <span className="animate-bounce text-xl font-bold text-[#FFD400] delay-150">.</span>
+                    <span className="animate-bounce text-xl font-bold text-[#FFD400] delay-300">.</span>
+                </div>
+
+                {/* Timeout Fallback Message */}
+                {showTimeoutMsg && (
+                    <motion.div
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-center mt-4"
+                    >
+                        <p className="text-gray-400 text-sm mb-2">Taking longer than expected?</p>
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="text-[#FFD400] text-sm underline hover:text-white transition-colors"
+                        >
+                            Tap to Refresh
+                        </button>
+                    </motion.div>
+                )}
             </div>
         </div>
     );

@@ -32,12 +32,16 @@ const SearchResults = ({ onClose }) => {
 
   // Debounced search
   useEffect(() => {
+    const controller = new AbortController();
+    const signal = controller.signal;
+
     const timer = setTimeout(async () => {
-      if (searchQuery.trim()) {
+      if (searchQuery.trim().length >= 2) {
         try {
           setLoading(true);
           setHasSearched(true);
           const results = await searchMovies(searchQuery);
+          if (signal.aborted) return;
 
           // Filter by selected genres if any
           let filtered = results;
@@ -54,20 +58,26 @@ const SearchResults = ({ onClose }) => {
             );
           }
 
-          setFilteredMovies(filtered);
+          // Limit to max 20
+          setFilteredMovies(filtered.slice(0, 20));
         } catch (err) {
-          console.error('Error searching:', err);
-          setFilteredMovies([]);
+          if (!signal.aborted) {
+            console.error('Error searching:', err);
+            setFilteredMovies([]);
+          }
         } finally {
-          setLoading(false);
+          if (!signal.aborted) setLoading(false);
         }
       } else {
         setFilteredMovies([]);
-        setHasSearched(false);
+        if (searchQuery.trim().length === 0) setHasSearched(false);
       }
-    }, 500);
+    }, 400);
 
-    return () => clearTimeout(timer);
+    return () => {
+      controller.abort();
+      clearTimeout(timer);
+    };
   }, [searchQuery, selectedGenres, allGenres]);
 
   const toggleGenre = (genreId) => {
@@ -142,10 +152,10 @@ const SearchResults = ({ onClose }) => {
                   whileTap={{ scale: 0.95 }}
                   onClick={() => toggleGenre(genre.id)}
                   className={`px-4 py-2 rounded-xl font-bold transition-all border-2 ${selectedGenres.includes(genre.id)
-                      ? 'bg-primary-yellow border-primary-yellow text-white shadow-yellow-glow'
-                      : darkTheme
-                        ? 'bg-card-bg-dark border-card-border-dark text-muted-text-dark hover:border-primary-yellow/50'
-                        : 'bg-card-bg-light border-card-border-light text-muted-text-light hover:border-primary-yellow/50'
+                    ? 'bg-primary-yellow border-primary-yellow text-white shadow-yellow-glow'
+                    : darkTheme
+                      ? 'bg-card-bg-dark border-card-border-dark text-muted-text-dark hover:border-primary-yellow/50'
+                      : 'bg-card-bg-light border-card-border-light text-muted-text-light hover:border-primary-yellow/50'
                     }`}
                 >
                   {genre.name}

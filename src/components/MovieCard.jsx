@@ -1,66 +1,52 @@
-import React, { useContext, useState, memo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { memo } from 'react';
 import { motion } from 'framer-motion';
-import { FiPlus, FiCheck, FiStar, FiInfo } from 'react-icons/fi';
-import { getPoster } from '../utils/poster';
-import { getRating } from '../utils/getRating';
-import { getMediaRoute } from '../utils/mediaUtils';
-import { WatchlistContext } from '../context/WatchlistContext';
-import { UserContext } from '../context/UserContext';
-import { AuthContext } from '../context/AuthContext';
-import { getGenreName } from '../utils/genreMap';
+import { FiPlus, FiCheck, FiStar } from 'react-icons/fi';
+import { POSTER_BASE, PLACEHOLDER_POSTER } from '../utils/imageConstants';
+import { isMobileDevice } from '../utils/isMobile';
 
-const MovieCard = memo(({ movie, onClick, rank }) => {
-  const { savedForLater, currentlyWatching, addToWatchlist, removeFromWatchlist } = useContext(WatchlistContext);
-  const { isGuest } = useContext(AuthContext);
-  const navigate = useNavigate();
+const MovieCard = memo(({
+  id,
+  title,
+  posterPath,
+  rating,
+  genre,
+  year,
+  rank,
+  isInWatchlist,
+  onToggleWatchlist,
+  onNavigate
+}) => {
 
-  if (!movie) return null;
-
-  const isInWatchlist = [...savedForLater, ...currentlyWatching].some(item => item.id === movie.id);
-  const rating = getRating(movie);
-  const primaryGenre = getGenreName(movie.genre_ids?.[0]) || "Movie";
+  const isMobile = isMobileDevice();
 
   const handleWatchlistToggle = (e) => {
     e.stopPropagation();
-    if (isGuest) {
-      navigate('/login');
-      return;
-    }
-    isInWatchlist ? removeFromWatchlist(movie.id) : addToWatchlist(movie);
+    if (onToggleWatchlist) onToggleWatchlist();
   };
 
   const handleCardClick = () => {
-    if (onClick) onClick();
-    else navigate(getMediaRoute(movie));
+    if (onNavigate) onNavigate();
   };
 
-  // Animation Variants
+  // Animation Variants (Mobile Safe)
   const containerVariants = {
     rest: {
       y: 0,
-      boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)"
+      boxShadow: isMobile ? "none" : "0 4px 6px rgba(0, 0, 0, 0.1)"
     },
     hover: {
-      y: -8,
-      boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.5), 0 10px 10px -5px rgba(0, 0, 0, 0.4)",
+      y: isMobile ? 0 : -8,
+      boxShadow: isMobile ? "none" : "0 10px 15px -3px rgba(0, 0, 0, 0.4)",
       transition: { duration: 0.3, ease: "easeOut" }
     },
     tap: { scale: 0.98 }
   };
 
-  const imageVariants = {
-    rest: { scale: 1 },
-    hover: {
-      scale: 1.1,
-      transition: { duration: 0.4, ease: "easeOut" }
-    }
-  };
-
   const overlayVariants = {
     rest: { opacity: 0 },
     hover: {
-      opacity: 1,
+      opacity: isMobile ? 1 : 1,
+      opacity: 1, // Simplified as decided
       transition: { duration: 0.2, ease: "easeOut" }
     }
   };
@@ -97,10 +83,11 @@ const MovieCard = memo(({ movie, onClick, rank }) => {
           whileTap="tap"
         >
           <img
-            src={getPoster(movie.poster_path)}
-            alt={movie.title || movie.name}
+            src={posterPath ? POSTER_BASE + posterPath : PLACEHOLDER_POSTER}
+            alt={title}
             className="w-full h-full object-cover rounded-xl"
             loading="lazy"
+            onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_POSTER; }}
           />
 
           <motion.div
@@ -113,15 +100,15 @@ const MovieCard = memo(({ movie, onClick, rank }) => {
             variants={overlayVariants}
           >
             <h4 className="text-white font-bold text-sm leading-tight line-clamp-2 mb-1">
-              {movie.title || movie.name}
+              {title}
             </h4>
-            <p className="text-[10px] text-gray-300 mb-2">{primaryGenre}</p>
+            <p className="text-[10px] text-gray-300 mb-2">{genre}</p>
 
             <div className="flex items-center gap-1 text-[#FFD400] text-xs font-medium mb-3">
               <FiStar fill="#FFD400" /> {rating}
             </div>
 
-            <button className="bg-white/20 backdrop-blur-md hover:bg-[#FFD400] hover:text-black text-white text-[10px] font-semibold py-1.5 px-3 rounded-full transition-colors duration-200 w-full">
+            <button className="bg-black/60 hover:bg-[#FFD400] hover:text-black text-white text-[10px] font-semibold py-1.5 px-3 rounded-full transition-colors duration-200 w-full">
               View Details
             </button>
           </motion.div>
@@ -130,9 +117,9 @@ const MovieCard = memo(({ movie, onClick, rank }) => {
     );
   }
 
-  // ----------------------------------------------------------------
-  // STANDARD CARD LAYOUT
-  // ----------------------------------------------------------------
+
+
+
   return (
     <motion.div
       className="relative w-[160px] sm:w-[170px] aspect-[2/3] bg-[#121212] rounded-xl overflow-hidden cursor-pointer shadow-md border border-white/5"
@@ -144,10 +131,11 @@ const MovieCard = memo(({ movie, onClick, rank }) => {
     >
       {/* Poster with Zoom */}
       <img
-        src={getPoster(movie.poster_path)}
-        alt={movie.title || movie.name}
+        src={posterPath ? POSTER_BASE + posterPath : PLACEHOLDER_POSTER}
+        alt={title}
         className="w-full h-full object-cover rounded-xl"
         loading="lazy"
+        onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_POSTER; }}
       />
 
       {/* Dark Gradient Overlay - Fades to 0.7 opacity */}
@@ -166,7 +154,7 @@ const MovieCard = memo(({ movie, onClick, rank }) => {
       >
         {/* Title */}
         <h4 className="text-white font-bold text-sm leading-tight line-clamp-2 drop-shadow-md mb-1 w-full text-left">
-          {movie.title || movie.name}
+          {title}
         </h4>
 
         {/* Rating & Genre */}
@@ -175,28 +163,24 @@ const MovieCard = memo(({ movie, onClick, rank }) => {
             <FiStar size={10} fill="#FFD400" /> {rating}
           </span>
           <span className="opacity-80 truncate max-w-[80px] text-right">
-            {primaryGenre}
+            {genre}
           </span>
         </div>
 
         {/* View Details Button */}
         <div className="w-full">
-          <button className="w-full bg-white/10 hover:bg-[#FFD400] hover:text-black backdrop-blur-sm border border-white/20 text-white text-xs font-semibold py-2 rounded-lg transition-colors duration-200">
+          <button className="w-full bg-white/10 hover:bg-[#FFD400] hover:text-black border border-white/20 text-white text-xs font-semibold py-2 rounded-lg transition-colors duration-200">
             View Details
           </button>
         </div>
       </motion.div>
 
-      {/* Watchlist Button (Always Visible or Hover?) 
-          Requirement: "Hover preview... Overlay content...". 
-          It didn't explicitly forbid the watchlist button on top, but visual consistency implies cleaner look.
-          I'll keep it but integrate it better or hide it in 'rest' state if not active.
-      */}
+      {/* Watchlist Button */}
       <motion.div
         role="button"
         tabIndex={0}
-        className={`absolute top-2 right-2 p-2 rounded-full backdrop-blur-md border border-white/10 shadow-lg z-30 transition-colors
-          ${isInWatchlist ? 'bg-[#FFD400] text-black' : 'bg-black/40 text-white hover:bg-[#FFD400] hover:text-black'}
+        className={`absolute top-2 right-2 p-2 rounded-full border border-white/10 shadow-lg z-30 transition-colors
+          ${isInWatchlist ? 'bg-[#FFD400] text-black' : 'bg-black/60 text-white hover:bg-[#FFD400] hover:text-black'}
         `}
         variants={{
           rest: { opacity: isInWatchlist ? 1 : 0, scale: 0.8 },

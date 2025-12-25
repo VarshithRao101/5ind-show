@@ -24,38 +24,8 @@ const FilterModal = () => {
 
     const handleApply = () => {
         applyFilters(localFilters);
-
-        // Construct Query Params for Results Page
-        const params = new URLSearchParams();
-
-        // 1. Sort
-        if (localFilters.sortBy === 'rating') params.append('sort', 'vote_average.desc');
-        else if (localFilters.sortBy === 'date') params.append('sort', 'primary_release_date.desc');
-        else params.append('sort', 'popularity.desc');
-
-        // 2. Type
-        if (localFilters.contentType === 'tv') params.append('type', 'tv');
-        else params.append('type', 'movie'); // Default to movie for 'all' or 'movie'
-
-        // 3. Genre
-        if (localFilters.genreId) params.append('genre', localFilters.genreId);
-
-        // 4. Language
-        if (localFilters.language) params.append('language', localFilters.language);
-
-        // 5. Year
-        if (localFilters.year) {
-            if (localFilters.year.includes('-')) {
-                const [start, end] = localFilters.year.split('-');
-                params.append('yearFrom', start);
-                params.append('yearTo', end);
-            } else {
-                params.append('yearFrom', localFilters.year);
-                params.append('yearTo', localFilters.year);
-            }
-        }
-
-        navigate(`/results?${params.toString()}`);
+        closeModal();
+        navigate('/');
     };
 
     if (!isModalOpen) return null;

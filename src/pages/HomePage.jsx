@@ -17,7 +17,10 @@ import SkeletonCard from '../components/skeletons/SkeletonCard';
 import { WatchlistContext } from '../context/WatchlistContext';
 import { UserContext } from '../context/UserContext';
 import { FilterContext } from '../context/FilterContext';
+import { AuthContext } from '../context/AuthContext';
 import { getPoster } from "../utils/poster";
+import { getRating } from '../utils/getRating';
+import { getGenreName } from '../utils/genreMap';
 
 // Hero Slide Component
 const HeroSlide = ({ movie }) => {
@@ -118,6 +121,13 @@ const HeroSlide = ({ movie }) => {
 
 export default function HomePage() {
     const isMobile = isMobileDevice();
+    const navigate = useNavigate();
+    const {
+        savedForLater,
+        addToWatchlist,
+        removeFromWatchlist,
+        checkIfInWatchlist
+    } = useContext(WatchlistContext);
     const [heroMovie, setHeroMovie] = useState(null);
     const { filters } = useContext(FilterContext);
     const { darkTheme } = useContext(UserContext);
@@ -173,10 +183,10 @@ export default function HomePage() {
                 const [trend, ind, top, now] = await Promise.all([fetchTrending, fetchIndia, fetchTop, fetchNow]);
 
                 if (mounted) {
-                    setTrending(trend || []);
-                    setIndiaTop(ind || []);
-                    setTopRated(top || []);
-                    setNowPlaying(now || []);
+                    setTrending((trend || []).slice(0, 20));
+                    setIndiaTop((ind || []).slice(0, 20));
+                    setTopRated((top || []).slice(0, 20));
+                    setNowPlaying((now || []).slice(0, 20));
 
                     if (trend && trend.length > 0) {
                         setHeroMovie(trend[Math.floor(Math.random() * Math.min(6, trend.length))]);
@@ -246,7 +256,7 @@ export default function HomePage() {
                 });
 
                 if (mounted) {
-                    setFilteredMovies(results || []);
+                    setFilteredMovies((results || []).slice(0, 20));
                 }
             } catch (error) {
                 // Silent catch
@@ -350,16 +360,33 @@ export default function HomePage() {
                                         Filtered Results <span className="text-gray-500 text-lg">({filteredMovies.length})</span>
                                     </h2>
                                     <button
-                                        onClick={() => window.location.reload()}
+                                        onClick={() => setFilteredMovies([])}
                                         className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all flex items-center gap-2"
                                     >
                                         <FiX /> Clear Filters
                                     </button>
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-                                    {filteredMovies.map(movie => (
-                                        <MovieCard key={movie.id} movie={movie} />
-                                    ))}
+                                    {filteredMovies.map(movie => {
+                                        const inList = checkIfInWatchlist(movie.id);
+                                        return (
+                                            <MovieCard
+                                                key={movie.id}
+                                                id={movie.id}
+                                                title={movie.title || movie.name}
+                                                posterPath={movie.poster_path}
+                                                rating={movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
+                                                genre={getGenreName(movie.genre_ids?.[0]) || "Movie"}
+                                                year={(movie.release_date || movie.first_air_date || "").substring(0, 4)}
+                                                isInWatchlist={inList}
+                                                onToggleWatchlist={() => {
+                                                    if (inList) removeFromWatchlist(movie.id);
+                                                    else addToWatchlist(movie);
+                                                }}
+                                                onNavigate={() => navigate(movie.media_type === 'tv' ? `/tv/${movie.id}` : `/movie/${movie.id}`)}
+                                            />
+                                        );
+                                    })}
                                 </div>
                             </div>
                         ) : (
@@ -414,8 +441,9 @@ export default function HomePage() {
                             </div>
                         )}
                     </div>
-                </div>
-            )}
+                </div >
+            )
+            }
         </>
     );
 }

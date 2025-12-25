@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { POSTER_BASE, PLACEHOLDER_POSTER } from '../utils/imageConstants';
 
 export default function MobileMovieGrid({ movies }) {
     const navigate = useNavigate();
@@ -19,18 +20,15 @@ export default function MobileMovieGrid({ movies }) {
                     onClick={() => navigate(`/movie/${movie.id}`)}
                     className="bg-gray-900 rounded-md overflow-hidden cursor-pointer active:scale-95 transition"
                 >
-                    {movie.poster_path ? (
+                    <div className="relative aspect-[2/3]">
                         <img
-                            src={`https://image.tmdb.org/t/p/w342${movie.poster_path}`}
-                            alt={movie.title}
+                            src={movie.poster_path ? POSTER_BASE + movie.poster_path : PLACEHOLDER_POSTER}
+                            alt={movie.title || movie.name}
                             loading="lazy"
-                            className="w-full h-auto"
+                            className="w-full h-full object-cover"
+                            onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_POSTER; }}
                         />
-                    ) : (
-                        <div className="h-48 flex items-center justify-center text-gray-500">
-                            No Image
-                        </div>
-                    )}
+                    </div>
 
                     <div className="p-2 text-sm text-white truncate">
                         {(movie.title || movie.name || "Untitled")}

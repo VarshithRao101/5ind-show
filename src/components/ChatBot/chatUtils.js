@@ -1,5 +1,4 @@
 import tmdb from '../../services/tmdb';
-import { getGeminiIntent } from '../../chatbot/geminiClient';
 import { CONCEPT_MAP, normalizeTitle } from './conceptMap';
 
 const GENRES = {
@@ -29,18 +28,7 @@ const INTENTS = {
 };
 
 export const processUserMessage = async (input) => {
-    // 1. Try Gemini Intent
-    try {
-        const geminiIntent = await getGeminiIntent(input);
-        if (geminiIntent && geminiIntent.intentType) {
-            console.log("Gemini Intent:", geminiIntent);
-            return await executeGeminiIntent(geminiIntent);
-        }
-    } catch (e) {
-        console.warn("Gemini Failed, falling back to rule-based.", e);
-    }
-
-    // 2. Fallback: Rule-Based Logic
+    // FALLBACK: Rule-Based Logic (Stable & Safe)
     const text = input.toLowerCase();
 
     // Determine target media type based on user input keywords
@@ -87,8 +75,7 @@ export const processUserMessage = async (input) => {
         return await discoverMedia(finalType, genreIds, language);
     }
 
-    // 3. Last Resort: Keyword Search (e.g. "time loop")
-    // If Gemini failed or was bypassed, treat input as a keyword concept
+    // Keyword Fallback
     const cleanedText = text.replace(/movies?|shows?|series?/g, '').trim();
     if (cleanedText.length > 2) {
         const keywordRes = await discoverByKeywords(finalType, [cleanedText], [], language);
@@ -96,65 +83,9 @@ export const processUserMessage = async (input) => {
     }
 
     return {
-        text: "I didn't quite catch that. Try asking for:\n• Telugu horror movies\n• Best TV shows\n• Movies like Inception\n",
+        text: "I didn't quite catch that. Try asking for:\n• Telugu horror movies\n• Best TV shows\n• Movies like Inception",
         movies: []
     };
-};
-
-// ------------------------------------------------------------------
-// GEMINI EXECUTION HANDLER
-// ------------------------------------------------------------------
-const executeGeminiIntent = async (intent) => {
-    const { intentType, baseTitle, mediaType, genres, language, concepts } = intent;
-    const type = mediaType === 'tv' ? 'tv' : 'movie';
-    const genreMap = type === 'tv' ? TV_GENRES : GENRES;
-
-    // Map Genre Names to IDs
-    const genreIds = [];
-    if (genres && Array.isArray(genres)) {
-        genres.forEach(g => {
-            const lower = g.toLowerCase();
-            const key = Object.keys(genreMap).find(k => lower.includes(k) || k.includes(lower));
-            if (key) genreIds.push(genreMap[key]);
-        });
-    }
-
-    // Map Language
-    let langCode = null;
-    if (language) {
-        const lower = language.toLowerCase();
-        langCode = LANGUAGES[lower] || (Object.values(LANGUAGES).includes(lower) ? lower : null);
-    }
-
-    // PRIORITY 1: Abstract Concepts (e.g. "time loop", "aliens")
-    // If Gemini extracted concepts, we MUST search them regardless of intent label
-    // This fixes issues where "genre_search" hides specific concept keywords
-    if (concepts && Array.isArray(concepts) && concepts.length > 0) {
-        return await discoverByKeywords(type, concepts, genreIds, langCode);
-    }
-
-    // PRIORITY 2: Specific Title (e.g. "Like Dark")
-    if (baseTitle) {
-        const normalized = normalizeTitle(baseTitle);
-        // Check Concept Map first
-        if (CONCEPT_MAP[normalized]) {
-            return await handleConceptQuery(baseTitle, CONCEPT_MAP[normalized], type);
-        }
-        // Fallback to TMDB Similar
-        return await handleSimilarQuery(baseTitle, type);
-    }
-
-    // PRIORITY 3: Explicit Sorting Intents
-    if (intentType === 'trending') {
-        return await getTrending(type, langCode);
-    }
-    if (intentType === 'top_rated') {
-        return await getTopRated(type, genreIds, langCode);
-    }
-
-    // PRIORITY 4: General Discovery (Genres / Language / Default)
-    // Used for simple genre searches or broad language queries
-    return await discoverMedia(type, genreIds, langCode);
 };
 
 // ------------------------------------------------------------------
@@ -172,7 +103,7 @@ const handleConceptQuery = async (queryName, concept, userMediaType) => {
             page: 1
         };
         const res = await tmdb.get(`/discover/${searchType}`, { params });
-        let movies = res.data.results.slice(0, 10);
+        let movies = res.data.results.slice(0, 5); // Limit to 5 for Chat
         movies = movies.filter(m => normalizeTitle(m.title || m.name) !== normalizeTitle(queryName));
         if (searchType === 'tv') movies = movies.map(m => ({ ...m, media_type: 'tv' }));
         const typeLabel = searchType === 'tv' ? 'shows' : 'movies';
@@ -191,7 +122,7 @@ const handleSimilarQuery = async (query, type) => {
         }
         const target = searchRes.data.results[0];
         const recRes = await tmdb.get(`/${type}/${target.id}/recommendations`);
-        let movies = recRes.data.results.slice(0, 10);
+        let movies = recRes.data.results.slice(0, 5); // Limit 5
         if (type === 'tv') movies = movies.map(m => ({ ...m, media_type: 'tv' }));
         return {
             text: `Here are some ${type === 'tv' ? 'shows' : 'movies'} similar to "${target.name || target.title}" 👇`,
@@ -202,7 +133,6 @@ const handleSimilarQuery = async (query, type) => {
 
 const discoverByKeywords = async (type, concepts, genreIds, language) => {
     try {
-        // 1. Find Keyword IDs (Limit to first 2 concepts to save calls)
         const keywordIds = [];
         const searchPromises = concepts.slice(0, 2).map(c =>
             tmdb.get('/search/keyword', { params: { query: c } })
@@ -216,23 +146,21 @@ const discoverByKeywords = async (type, concepts, genreIds, language) => {
             return { text: "I couldn't find matches for those themes.", movies: [] };
         }
 
-        // 2. Discover with keywords
         const params = {
             sort_by: 'popularity.desc',
             with_genres: genreIds.join(','),
-            with_keywords: foundIds.join('|'), // OR logic for broader matches
+            with_keywords: foundIds.join('|'),
             with_original_language: language,
             include_adult: false,
             page: 1
         };
 
         const res = await tmdb.get(`/discover/${type}`, { params });
-        let movies = res.data.results.slice(0, 10);
+        let movies = res.data.results.slice(0, 5); // Limit 5
         if (type === 'tv') movies = movies.map(m => ({ ...m, media_type: 'tv' }));
 
-        const conceptStr = concepts.join(', ');
         return {
-            text: `Here are some ${type === 'tv' ? 'shows' : 'movies'} featuring themes like "${conceptStr}" 👇`,
+            text: `Here are top matches for "${concepts.join(', ')}" 👇`,
             movies
         };
 
@@ -245,7 +173,7 @@ const getTrending = async (type, language) => {
     try {
         if (language) return await discoverMedia(type, [], language, 'popularity.desc');
         const res = await tmdb.get(`/trending/${type}/week`);
-        let movies = res.data.results.slice(0, 10);
+        let movies = res.data.results.slice(0, 5);
         if (type === 'tv') movies = movies.map(m => ({ ...m, media_type: 'tv' }));
         return {
             text: `Here are the top trending ${type === 'tv' ? 'TV shows' : 'movies'} right now 🔥`,
@@ -268,7 +196,7 @@ const discoverMedia = async (type, genreIds, language, sortBy = 'popularity.desc
             ...extraParams
         };
         const res = await tmdb.get(`/discover/${type}`, { params });
-        let movies = res.data.results.slice(0, 10);
+        let movies = res.data.results.slice(0, 5);
         if (type === 'tv') movies = movies.map(m => ({ ...m, media_type: 'tv' }));
         return {
             text: `Here are some ${type === 'tv' ? 'TV shows' : 'movies'} for you 👇`,

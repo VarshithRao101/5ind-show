@@ -731,13 +731,24 @@ export async function getMoviesByLanguage(langCode, sort = "popularity.desc", pa
 }
 
 // 7. Person Details Extended
+// 7. Person Details Extended
 export async function getPersonDetailsFull(personId) {
+  if (!personId) return null;
+  const key = `person_full_${personId}`;
+  const cached = cache.get(key);
+  if (cached) return cached;
+
   try {
     const res = await tmdb.get(`/person/${personId}`, {
       params: { append_to_response: "combined_credits,external_ids,images" }
     });
+    cache.set(key, res.data, 600); // Cache for 10 minutes
     return res.data;
-  } catch (e) { return null; }
+  } catch (e) {
+    throw e;
+  }
 }
 
 export default tmdb;
+
+// PERFORMANCE OPTIMIZATION APPLIED

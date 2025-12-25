@@ -4,14 +4,7 @@ import { WatchlistContext } from '../../context/WatchlistContext';
 import { useNavigate } from 'react-router-dom';
 import { FiArchive, FiTrash2 } from 'react-icons/fi';
 
-// 1. Import SmartImage (add at top)
-import { getPosterUrl } from '../../config/tmdbImage';
-import SmartImage from '../../components/SmartImage';
-
-// ...
 import MovieCard from '../../components/MovieCard';
-
-// ... (existing helper function removal)
 
 export default function Watchlist() {
   const { savedForLater, removeFromWatchlist } = useContext(WatchlistContext);
@@ -42,10 +35,18 @@ export default function Watchlist() {
         {/* Content Grid */}
         {watchlistItems.length > 0 ? (
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 2xl:grid-cols-6 gap-x-6 gap-y-10">
-            {watchlistItems.map((item) => (
+            {watchlistItems.slice(0, 50).map((item) => (
               <MovieCard
                 key={item.id}
-                movie={item}
+                id={item.id}
+                title={item.title || item.name}
+                posterPath={item.poster_path}
+                rating={item.vote_average?.toFixed(1) || "N/A"}
+                genre={item.genres?.[0]?.name || (item.genre_ids ? "Movie" : "Unknown")}
+                year={(item.release_date || item.first_air_date || "").substring(0, 4)}
+                isInWatchlist={true}
+                onToggleWatchlist={() => removeFromWatchlist(item.id)}
+                onNavigate={() => navigate(item.media_type === 'tv' ? `/tv/${item.id}` : `/movie/${item.id}`)}
               />
             ))}
           </div>

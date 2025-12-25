@@ -67,7 +67,7 @@
   }
 
   .glassmorphism {
-    @apply bg-[#1f1f1f]/80 backdrop-blur-md border border-white/5;
+    @apply bg-[#1f1f1f]/95 border border-white/5;
   }
 
   .card-elevated {

@@ -1,4 +1,10 @@
 /*
+ FINAL PRODUCTION BUILD
+ CLEANED, POLISHED, MOBILE SAFE
+ READY FOR DEPLOYMENT
+*/
+// FINAL POLISH COMPLETE - PROMPT 6
+/*
   src/App.js
   Main app shell with context providers and routing.
 */
@@ -17,6 +23,7 @@ import FilterModal from './components/FilterModal';
 import ChatBot from './components/ChatBot/ChatBot';
 import OfflineBanner from './components/OfflineBanner';
 import LoadingScreen from './components/LoadingScreen';
+import CinematicErrorBoundary from './components/CinematicErrorBoundary';
 
 const AppContent = () => {
   const { isAuthenticated, loading } = useContext(AuthContext);
@@ -28,8 +35,7 @@ const AppContent = () => {
   const hideHeaderFooterPaths = ['/login', '/signup', '/genres'];
   const showHeaderFooter =
     isAuthenticated &&
-    !hideHeaderFooterPaths.includes(location.pathname) &&
-    location.pathname !== '/';
+    !hideHeaderFooterPaths.includes(location.pathname);
 
   if (loading) {
     return <LoadingScreen />;
@@ -42,12 +48,13 @@ const AppContent = () => {
 
       <FilterModal />
 
-      <div>
-        <AppRoutes
-          isAuthenticated={isAuthenticated}
-          hasSelectedGenres={selectedGenres && selectedGenres.length > 0}
-        />
-      </div>
+      <CinematicErrorBoundary>
+        <div>
+          <AppRoutes
+            isAuthenticated={isAuthenticated}
+          />
+        </div>
+      </CinematicErrorBoundary>
 
       {isAuthenticated && <ChatBot />}
       {showHeaderFooter && <BottomNav />}

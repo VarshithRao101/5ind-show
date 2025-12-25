@@ -1,9 +1,13 @@
-import React, { useRef, memo } from 'react';
+import React, { useRef, memo, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { FiChevronLeft, FiChevronRight, FiRefreshCw } from 'react-icons/fi';
 import MovieCard from './MovieCard';
 import SkeletonCard from './skeletons/SkeletonCard';
+import { WatchlistContext } from '../context/WatchlistContext';
+import { AuthContext } from '../context/AuthContext';
+import { getRating } from '../utils/getRating';
+import { getGenreName } from '../utils/genreMap';
 
 const containerVariants = {
     hidden: { opacity: 0 },
@@ -38,6 +42,8 @@ const MovieSlider = ({
 }) => {
     const navigate = useNavigate();
     const sliderRef = useRef(null);
+    const { savedForLater, currentlyWatching, addToWatchlist, removeFromWatchlist } = useContext(WatchlistContext);
+    const { isGuest } = useContext(AuthContext);
 
     const scroll = (direction) => {
         if (sliderRef.current) {
@@ -48,6 +54,14 @@ const MovieSlider = ({
     };
 
     if (!loading && (!movies || movies.length === 0)) return null;
+
+    const handleWatchlist = (movie, inList) => {
+        if (isGuest) {
+            navigate('/login');
+            return;
+        }
+        inList ? removeFromWatchlist(movie.id) : addToWatchlist(movie);
+    };
 
     return (
         <section className="mb-8 relative group pl-4 md:pl-12 overflow-hidden">
@@ -113,19 +127,29 @@ const MovieSlider = ({
                             </div>
                         ))
                     ) : (
-                        movies.slice(0, showCount).map((movie, index) => (
-                            <motion.div
-                                key={`${movie.id}-${index}`}
-                                variants={itemVariants}
-                                className={`${ranked ? 'min-w-[260px]' : 'min-w-[160px] md:min-w-[170px]'} snap-start flex-shrink-0 transform transition-transform hover:z-30 origin-center`}
-                            >
-                                <MovieCard
-                                    movie={movie}
-                                    rank={ranked ? index + 1 : null}
-                                    onClick={() => navigate(movie.media_type === 'tv' ? `/tv/${movie.id}` : `/movie/${movie.id}`)}
-                                />
-                            </motion.div>
-                        ))
+                        Array.isArray(movies) && movies.slice(0, showCount).map((movie, index) => {
+                            const inList = [...savedForLater, ...currentlyWatching].some(item => item.id === movie.id);
+                            return (
+                                <motion.div
+                                    key={`${movie.id}-${index}`}
+                                    variants={itemVariants}
+                                    className={`${ranked ? 'min-w-[260px]' : 'min-w-[160px] md:min-w-[170px]'} snap-start flex-shrink-0 transform transition-transform hover:z-30 origin-center`}
+                                >
+                                    <MovieCard
+                                        id={movie.id}
+                                        title={movie.title || movie.name}
+                                        posterPath={movie.poster_path}
+                                        rating={getRating(movie)}
+                                        genre={getGenreName(movie.genre_ids?.[0]) || "Movie"}
+                                        year={(movie.release_date || movie.first_air_date || "").substring(0, 4)}
+                                        rank={ranked ? index + 1 : null}
+                                        isInWatchlist={inList}
+                                        onToggleWatchlist={() => handleWatchlist(movie, inList)}
+                                        onNavigate={() => navigate(movie.media_type === 'tv' ? `/tv/${movie.id}` : `/movie/${movie.id}`)}
+                                    />
+                                </motion.div>
+                            );
+                        })
                     )}
 
                     {/* Spacer for right padding */}

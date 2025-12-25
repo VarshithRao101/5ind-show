@@ -7,7 +7,7 @@ export default function SearchBar({ initialQuery = "", realTime = false }) {
     const navigate = useNavigate();
 
     const handleSearch = (q) => {
-        if (!q || q.trim().length === 0) return;
+        if (!q || q.trim().length < 2) return;
         // setQuery(q); // removed redundant setQuery since input drives it
         navigate(`/search?q=${encodeURIComponent(q.trim())}`);
     };
@@ -22,10 +22,10 @@ export default function SearchBar({ initialQuery = "", realTime = false }) {
     React.useEffect(() => {
         if (!realTime) return;
         const delayDebounceFn = setTimeout(() => {
-            if (query.trim().length > 0) {
+            if (query.trim().length >= 2) {
                 navigate(`/search?q=${encodeURIComponent(query.trim())}`, { replace: true });
             }
-        }, 500);
+        }, 400);
 
         return () => clearTimeout(delayDebounceFn);
     }, [query, realTime, navigate]);

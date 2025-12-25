@@ -1,12 +1,13 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { FiSearch, FiFilter, FiUser, FiZap, FiX, FiBell, FiTrash2, FiHeart, FiTv, FiAlertCircle, FiCheckSquare } from 'react-icons/fi';
+import { FiSearch, FiFilter, FiUser, FiZap, FiX, FiBell, FiHeart, FiTv, FiAlertCircle, FiCheckSquare } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 import { UserContext } from '../context/UserContext';
 import { AuthContext } from '../context/AuthContext';
 import { FilterContext } from '../context/FilterContext';
 import { WatchlistContext } from '../context/WatchlistContext';
 import SmartImage from './SmartImage';
+import { getTrendingAll } from '../services/tmdb';
 
 // Helper
 const getTimeAgo = (dateStr) => {
@@ -20,6 +21,7 @@ const getTimeAgo = (dateStr) => {
   return `${days}d ago`;
 };
 
+// NAVIGATION FEATURES RESTORED - PROMPT A
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -59,8 +61,19 @@ const Header = () => {
     openModal();
   };
 
-  const handleSurpriseClick = () => {
-    navigate('/random');
+  const handleSurpriseClick = async () => {
+    try {
+      const results = await getTrendingAll();
+      if (results && results.length > 0) {
+        const randomItem = results[Math.floor(Math.random() * results.length)];
+        if (randomItem.id) {
+          const type = randomItem.media_type === 'tv' ? 'tv' : 'movie';
+          navigate(`/${type}/${randomItem.id}`);
+        }
+      }
+    } catch (error) {
+      console.warn('Surprise failed', error);
+    }
   };
 
   const toggleNotifs = () => {
@@ -85,11 +98,8 @@ const Header = () => {
           onClick={handleLogoClick}
           className="flex items-center gap-2 cursor-pointer group flex-shrink-0"
         >
-          <div className="w-10 h-10 bg-primary-yellow rounded-lg flex items-center justify-center shadow-yellow-glow group-hover:rotate-12 transition-transform duration-300">
-            <span className="font-heading font-black text-black text-xl">5</span>
-          </div>
-          <span className="hidden sm:block font-heading font-bold text-xl text-white tracking-tight">
-            5ind<span className="text-primary-yellow">Show</span>
+          <span className="font-heading font-black text-2xl tracking-tighter text-white">
+            5IND<span className="text-primary-yellow">SHOW</span>
           </span>
         </div>
 
@@ -109,14 +119,15 @@ const Header = () => {
         {/* 3. Actions (Right) */}
         <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
 
-          {/* Surprise Me - Desktop */}
+          {/* Random / Surprise Me */}
           <button
             onClick={handleSurpriseClick}
-            className="hidden md:flex items-center justify-center p-2.5 rounded-full text-gray-300 hover:text-white hover:bg-white/10 transition-all tooltip-trigger"
+            className="p-2.5 rounded-full text-gray-300 hover:text-primary-yellow hover:bg-white/10 transition-all relative"
             title="Surprise Me"
           >
             <FiZap size={20} />
           </button>
+
 
           {/* Filter Modal Trigger */}
           <button
