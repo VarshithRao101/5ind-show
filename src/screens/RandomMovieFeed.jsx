@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useContext } from "react";
+import { isMobileDevice } from "../utils/isMobile";
+import MobileMovieGrid from "../components/MobileMovieGrid";
 import { motion } from "framer-motion";
 import { IoStar, IoPlay, IoInformationCircle, IoLanguage } from "react-icons/io5";
 import { Link } from "react-router-dom";
@@ -167,9 +169,17 @@ const Section = ({ movie, index }) => {
 };
 
 export default function RandomMovieFeed() {
+  const isMobile = isMobileDevice();
   const [movieList, setMovieList] = useState([]);
   const [loading, setLoading] = useState(true);
   const { darkTheme } = useContext(UserContext);
+
+  useEffect(() => {
+    const safety = setTimeout(() => {
+      setLoading(false);
+    }, 6000);
+    return () => clearTimeout(safety);
+  }, []);
 
   useEffect(() => {
     const fetchRandomMovies = async () => {
@@ -184,7 +194,7 @@ export default function RandomMovieFeed() {
           setMovieList([]);
         }
       } catch (err) {
-        console.error('Error fetching random movies:', err);
+        // Silent catch
         setMovieList([]);
       } finally {
         setLoading(false);
@@ -194,33 +204,34 @@ export default function RandomMovieFeed() {
     fetchRandomMovies();
   }, []);
 
-  if (loading) {
-    return (
-      <div className={`h-screen w-full flex items-center justify-center ${darkTheme ? 'bg-app-bg-dark text-white' : 'bg-app-bg-light text-text-light'}`}>
-        <div className="text-center">
-          <div className="w-12 h-12 border-3 border-primary-yellow/30 border-t-primary-yellow rounded-full animate-spin mx-auto mb-4" />
-          <p>Loading movies...</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (!movieList || movieList.length === 0) {
-    return (
-      <div className={`h-screen w-full flex items-center justify-center ${darkTheme ? 'bg-app-bg-dark text-white' : 'bg-app-bg-light text-text-light'}`}>
-        <div className="text-center">
-          <p className="text-lg">No movies found. Please try again later.</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
-    <div className="h-screen w-full bg-black text-white snap-y snap-mandatory overflow-y-scroll scrollbar-hide">
-      {movieList.map((m, idx) => (
-        <Section key={m.id} movie={m} index={idx} />
-      ))}
-    </div>
+    <>
+      {isMobile ? (
+        <div className="min-h-screen pt-16 bg-[#0f0f0f]">
+          {loading && <div className="text-center mt-10 text-gray-400">Loading movies…</div>}
+          {!loading && <MobileMovieGrid movies={movieList} />}
+          {!loading && movieList.length === 0 && (
+            <div className="text-center text-gray-400 mt-8">
+              Nothing to show right now
+            </div>
+          )}
+        </div>
+      ) : (
+        <div className="h-screen w-full bg-black text-white snap-y snap-mandatory overflow-y-scroll scrollbar-hide">
+          {loading && (
+            <div className="flex bg-black items-center justify-center text-gray-400 h-screen">
+              Loading...
+            </div>
+          )}
+          {!loading && movieList.length > 0 && movieList.map((m, idx) => (
+            <Section key={m.id} movie={m} index={idx} />
+          ))}
+          {!loading && movieList.length === 0 && (
+            <div className="text-center text-gray-400 mt-8">Nothing to show</div>
+          )}
+        </div>
+      )}
+    </>
   );
 }
 
