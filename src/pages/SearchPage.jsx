@@ -18,6 +18,13 @@ export default function SearchPage() {
     const [activeTab, setActiveTab] = useState('all');
 
     useEffect(() => {
+        const safety = setTimeout(() => {
+            setLoading(false);
+        }, 6000);
+        return () => clearTimeout(safety);
+    }, []);
+
+    useEffect(() => {
         if (!q) {
             setResults([]);
             setLoading(false);
