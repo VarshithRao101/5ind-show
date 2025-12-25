@@ -11,28 +11,35 @@ export default function GenreDetail() {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [gridKey, setGridKey] = useState(0);
-
-    const loadMovies = async (page = 1) => {
-        setLoading(true);
-        try {
-            const data = await getTopMoviesByGenre(genreId, 30, true, page);
-            setMovies(data);
-        } catch (e) {
-            console.error("Genre load error", e);
-            setMovies([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     useEffect(() => {
-        loadMovies(randomPage(10));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [genreId]);
+        let mounted = true;
+
+        const loadMovies = async () => {
+            setLoading(true);
+            try {
+                const data = await getTopMoviesByGenre(genreId, 30, true, randomPage(10));
+                if (mounted) {
+                    setMovies(data || []);
+                }
+            } catch (error) {
+                console.error(error);
+                if (mounted) setMovies([]);
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        };
+
+        loadMovies();
+
+        return () => {
+            mounted = false;
+        };
+    }, [genreId, refreshTrigger]);
 
     const handleRefresh = () => {
-        const p = randomPage(20);
-        loadMovies(p).then(() => setGridKey(k => k + 1));
+        setRefreshTrigger(prev => prev + 1);
     };
 
     return (

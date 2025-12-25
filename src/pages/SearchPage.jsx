@@ -17,21 +17,22 @@ export default function SearchPage() {
     const [activeTab, setActiveTab] = useState('all');
 
     useEffect(() => {
-        // If query is empty, clear results
-        if (!q || q.trim().length < 2) {
-            setResults([]);
-            return;
-        }
-
         let mounted = true;
-        setLoading(true);
 
         const fetchSearch = async () => {
+            if (!q || q.trim().length < 2) {
+                if (mounted) setResults([]);
+                return;
+            }
+
+            setLoading(true);
             try {
                 const data = await searchMulti(q);
-                if (mounted) setResults(data || []);
-            } catch (e) {
-                console.error("Search failed", e);
+                if (mounted) {
+                    setResults(data || []);
+                }
+            } catch (error) {
+                console.error("Search failed", error);
                 if (mounted) setResults([]);
             } finally {
                 if (mounted) setLoading(false);
@@ -40,7 +41,9 @@ export default function SearchPage() {
 
         fetchSearch();
 
-        return () => { mounted = false; };
+        return () => {
+            mounted = false;
+        };
     }, [q]);
 
     // Split results

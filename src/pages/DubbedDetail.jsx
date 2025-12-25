@@ -12,28 +12,36 @@ export default function DubbedDetail() {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [gridKey, setGridKey] = useState(0);
-
-    const load = async (page = 1) => {
-        setLoading(true);
-        try {
-            const data = await getDubbedMovies(langCode, 30, true, page);
-            setMovies(data);
-        } catch (e) {
-            console.error("Dubbed load error", e);
-            setMovies([]);
-        } finally {
-            setLoading(false);
-        }
-    };
+    const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     useEffect(() => {
-        load(randomPage(8));
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [langCode]);
+        let mounted = true;
+
+        const loadMovies = async () => {
+            setLoading(true);
+            try {
+                const data = await getDubbedMovies(langCode, 30, true, randomPage(8));
+                if (mounted) {
+                    setMovies(data || []);
+                    setGridKey(k => k + 1);
+                }
+            } catch (error) {
+                console.error(error);
+                if (mounted) setMovies([]);
+            } finally {
+                if (mounted) setLoading(false);
+            }
+        };
+
+        loadMovies();
+
+        return () => {
+            mounted = false;
+        };
+    }, [langCode, refreshTrigger]);
 
     const handleRefresh = () => {
-        const p = randomPage(20);
-        load(p).then(() => setGridKey(k => k + 1));
+        setRefreshTrigger(prev => prev + 1);
     };
 
     return (

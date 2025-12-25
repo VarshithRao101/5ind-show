@@ -43,49 +43,40 @@ export default function SeriesPage() {
 
         const loadInit = async () => {
             try {
-                // Parallel Fetch for Speed
-                const [tvData, provData, creditsData, similarData] = await Promise.all([
-                    getTvDetails(id),
-                    getProviders("tv", id, "IN"), // Keeps this call but we need to handle the data logic manually if getProviders is deprecated or we access raw
-                    getCredits("tv", id),
-                    getSimilarSeries(id)
-                ]);
+                // Guarded Fetches
+                const fetchTv = getTvDetails(id).catch(e => { console.error("TV Fail", e); return null; });
+                const fetchProv = getProviders("tv", id, "IN").catch(e => { console.error("Prov Fail", e); return null; });
+                const fetchCredits = getCredits("tv", id).catch(e => { console.error("Credits Fail", e); return { cast: [] }; });
+                const fetchSimilar = getSimilarSeries(id).catch(e => { console.error("Similar Fail", e); return { data: { results: [] } }; });
 
-                // Correction: The `getProviders` helper in tmdb.js returns null (deprecated). 
-                // We must use getWatchProviders(id, 'tv') directly as done in MovieDetails.
-                const watchProvRes = await getTvDetails(id).then(d => d['watch/providers'] || {}); // Actually getTvDetails appends it.
-                // Or better, let's just make a specific call if not available.
-                // But wait, getTvDetails includes append_to_response "watch/providers".
+                // Parallel Wait
+                const [tvData, provData, creditsData, similarData] = await Promise.all([fetchTv, fetchProv, fetchCredits, fetchSimilar]);
 
-                // Let's refactor to use the data from tvData if possible or a separate call if needed.
-                // The `tvData` response from `getTvDetails` ALREADY has `watch/providers` appended. 
-                // Let's access it from there.
+                if (mounted) {
+                    if (tvData) {
+                        console.log("Series loaded:", tvData.name);
+                        setTv(tvData);
 
-                if (!mounted) return;
+                        const allProviders = tvData['watch/providers']?.results || {};
+                        const flatrateProviders = allProviders.IN?.flatrate || allProviders.US?.flatrate || [];
+                        setProviders(flatrateProviders);
 
-                if (!tvData) {
-                    setTv(null);
-                    return;
+                        setCast(creditsData?.cast?.slice(0, 15) || []);
+                        setSimilar(similarData?.data?.results?.slice(0, 12) || []);
+
+                        // Determine default season
+                        const validSeasons = tvData.seasons?.filter(s => s.season_number > 0) || [];
+                        const initialSeason = validSeasons.length > 0 ? validSeasons[0].season_number : (tvData.seasons?.[0]?.season_number || 1);
+
+                        setSelectedSeasonNumber(initialSeason);
+                    } else {
+                        console.warn("Series data missing for ID:", id);
+                        setTv(null);
+                    }
                 }
-
-                setTv(tvData);
-
-                const allProviders = tvData['watch/providers']?.results || {};
-                const flatrateProviders = allProviders.IN?.flatrate || allProviders.US?.flatrate || [];
-                setProviders(flatrateProviders);
-
-                setCast(creditsData?.cast?.slice(0, 15) || []);
-                setSimilar(similarData?.data?.results?.slice(0, 12) || []);
-
-                // Determine default season (Season 1 usually, or first available > 0)
-                const validSeasons = tvData.seasons?.filter(s => s.season_number > 0) || [];
-                const initialSeason = validSeasons.length > 0 ? validSeasons[0].season_number : (tvData.seasons?.[0]?.season_number || 1);
-
-                setSelectedSeasonNumber(initialSeason);
-
-            } catch (e) {
-                console.error("Failed to load series:", e);
-                setTv(null);
+            } catch (error) {
+                console.error("Failed to load series:", error);
+                if (mounted) setTv(null);
             } finally {
                 if (mounted) setLoading(false);
             }
@@ -93,7 +84,9 @@ export default function SeriesPage() {
 
         loadInit();
         window.scrollTo(0, 0);
-        return () => { mounted = false; };
+        return () => {
+            mounted = false;
+        };
     }, [id]);
 
     // 2. Season Switching: Fetch Episodes Only

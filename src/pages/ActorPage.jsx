@@ -15,36 +15,50 @@ export default function ActorPage() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        let mounted = true;
+        setLoading(true);
+
         const fetchData = async () => {
-            setLoading(true);
             try {
-                // Fetch Person Details
-                const res = await axios.get(`https://api.themoviedb.org/3/person/${personId}`, {
+                // Guarded Fetches
+                const fetchDetails = axios.get(`https://api.themoviedb.org/3/person/${personId}`, {
                     params: { api_key: API_KEY, language: 'en-US' }
-                });
-                setDetails(res.data);
+                }).catch(e => { console.error("Actor Details Fail", e); return null; });
 
-                // Fetch Credits (using existing helper or direct if needed)
-                // reusing getActorCredits from tmdb.js if available, or fetch direct to be sure of 'combined'
-                const creditsRes = await axios.get(`https://api.themoviedb.org/3/person/${personId}/combined_credits`, {
+                const fetchCredits = axios.get(`https://api.themoviedb.org/3/person/${personId}/combined_credits`, {
                     params: { api_key: API_KEY, language: 'en-US' }
-                });
+                }).catch(e => { console.error("Actor Credits Fail", e); return { data: { cast: [] } }; });
 
-                // Filter and Sort
-                const cast = creditsRes.data?.cast || [];
-                const valid = cast.filter(c => c.poster_path && (c.media_type === 'movie' || c.media_type === 'tv'));
-                // Sort by popularity desc
-                valid.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+                const [resDetails, resCredits] = await Promise.all([fetchDetails, fetchCredits]);
 
-                setCredits(valid);
-            } catch (e) {
-                console.error("Actor fetch error", e);
+                if (mounted) {
+                    if (resDetails && resDetails.data) {
+                        console.log("Actor loaded:", resDetails.data.name);
+                        setDetails(resDetails.data);
+
+                        // Process Credits
+                        const cast = resCredits?.data?.cast || [];
+                        const valid = cast.filter(c => c.poster_path && (c.media_type === 'movie' || c.media_type === 'tv'));
+                        valid.sort((a, b) => (b.popularity || 0) - (a.popularity || 0));
+
+                        setCredits(valid);
+                    } else {
+                        console.warn("Actor details missing");
+                    }
+                }
+            } catch (error) {
+                console.error("Actor fetch error", error);
             } finally {
-                setLoading(false);
+                if (mounted) setLoading(false);
             }
         };
+
         fetchData();
         window.scrollTo(0, 0);
+
+        return () => {
+            mounted = false;
+        };
     }, [personId]);
 
     if (loading) return (

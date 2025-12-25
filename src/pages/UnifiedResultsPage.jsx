@@ -55,22 +55,35 @@ const UnifiedResultsPage = () => {
 
     // Fetch Results
     useEffect(() => {
-        // Reset state on new params or manual refresh
-        setResults([]);
-        setPage(1);
-        setHasMore(true);
-        setLoading(true);
+        let mounted = true;
 
-        const fetchData = async () => {
-            setLoading(true);
-            const data = await getUnifiedResults({ ...apiParams, page: 1 });
-            setResults(data);
-            setHasMore(data.length > 0);
-            setLoading(false);
+        const loadResults = async () => {
+            if (mounted) {
+                setResults([]);
+                setPage(1);
+                setHasMore(true);
+                setLoading(true);
+            }
+
+            try {
+                const data = await getUnifiedResults({ ...apiParams, page: 1 });
+                if (mounted) {
+                    setResults(data || []);
+                    setHasMore((data && data.length > 0));
+                }
+            } catch (error) {
+                console.error(error);
+                if (mounted) setResults([]);
+            } finally {
+                if (mounted) setLoading(false);
+            }
         };
 
-        fetchData();
-        // Trigger re-fetch when params or refresh trigger changes
+        loadResults();
+
+        return () => {
+            mounted = false;
+        };
     }, [apiParams, refreshTrigger]);
 
     // Load More Handler
