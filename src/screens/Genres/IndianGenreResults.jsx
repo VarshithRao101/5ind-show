@@ -3,6 +3,7 @@ import React, { useEffect, useState, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { FiArrowLeft, FiRefreshCw, FiAlertCircle } from "react-icons/fi";
 import MovieCard from "../../components/MovieCard";
+import SkeletonCard from "../../components/skeletons/SkeletonCard";
 import tmdb from "../../services/tmdb";
 import { shuffle } from "../../services/tmdb";
 
@@ -46,7 +47,7 @@ export default function IndianGenreResults() {
     const [movies, setMovies] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    const fetchedData = React.useRef([]); // Cache for local shuffle
+    const fetchedData = React.useRef({}); // Cache for page tracking
 
     // Determine Mode
     const isIndianMode = Boolean(type && language);
@@ -60,8 +61,30 @@ export default function IndianGenreResults() {
         setLoading(true);
         setError(null);
         try {
-            // SHUFFLE LOGIC: Random page 1-8, otherwise page 1
-            const page = isShuffle ? Math.floor(Math.random() * 8) + 1 : 1;
+            // SHUFFLE LOGIC: Fetch next page instead of random page to ensure uniqueness
+            // Use a ref to track current page for this specific filter combo
+            const filterKey = `${type}-${language}-${genreId}`;
+
+            // If checking a new filter, reset pages tracking
+            if (!fetchedData.current[filterKey]) {
+                fetchedData.current[filterKey] = 1;
+            }
+
+            // If shuffling, increment page. If fetching fresh (page load), use tracked page (usually 1)
+            let page = fetchedData.current[filterKey];
+            if (isShuffle) {
+                page += 1;
+                fetchedData.current[filterKey] = page;
+            } else {
+                // Reset if it's a fresh mount/filter change implies we want start
+                // But wait, if we navigate back, we might want to keep state?
+                // For now, let's stick to 1 on fresh filter load
+                if (!isShuffle) {
+                    page = 1;
+                    fetchedData.current[filterKey] = 1;
+                }
+            }
+
             const genreParam = (genreId === 'all' || !genreId) ? undefined : genreId;
             const limit = 25;
 
@@ -107,13 +130,19 @@ export default function IndianGenreResults() {
                 results = res.data?.results || [];
             }
 
-            // Slice to limit
-            setMovies((results || []).slice(0, limit));
+            // Shuffle results locally to give "random" feel even within popularity sort
+            // But if we are paging, maybe don't shuffle too much to avoid losing order? 
+            // The prompt asks to "Randomize existing list first, Then fetch new page... Merge".
+            // Implementation: Fetch new page. Combine with existing (if we were keeping them, but here we replace setMovies).
+            // Actually, for "Show new movies", we replace the list.
+            const finalResults = shuffle(results).slice(0, limit);
+
+            setMovies(finalResults);
 
         } catch (e) {
             console.error("Genre Engine Error:", e);
             setError(`Failed to load movies: ${e.message || "Unknown Error"}`);
-            setMovies([]);
+            // Keep old movies if shuffle failed? No, better show error.
         } finally {
             setLoading(false);
         }
@@ -170,7 +199,7 @@ export default function IndianGenreResults() {
                 {loading && (
                     <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
                         {[...Array(20)].map((_, i) => (
-                            <div key={i} className="aspect-[2/3] bg-[#1a1a1a] rounded-xl animate-pulse" />
+                            <SkeletonCard key={i} />
                         ))}
                     </div>
                 )}

@@ -6,18 +6,21 @@ const PLACEHOLDER_POSTER = '/assets/placeholder-episode.png';
 const PLACEHOLDER_BACKDROP = '/assets/placeholder-episode.png';
 const PLACEHOLDER_PROFILE = '/assets/placeholder-episode.png';
 
-export const getPosterUrl = (posterPath, size = 'w342') => {
+export const getPosterUrl = (posterPath, isMobile = false) => {
   if (!posterPath) return PLACEHOLDER_POSTER;
+  const size = isMobile ? 'w342' : 'w500';
   return `https://image.tmdb.org/t/p/${size}${posterPath}`;
 };
 
-export const getBackdropUrl = (backdropPath, size = 'w500') => {
+export const getBackdropUrl = (backdropPath, isMobile = false) => {
   if (!backdropPath) return PLACEHOLDER_BACKDROP;
+  const size = isMobile ? 'w780' : 'w1280';
   return `https://image.tmdb.org/t/p/${size}${backdropPath}`;
 };
 
-export const getProfileUrl = (profilePath, size = 'w185') => {
+export const getProfileUrl = (profilePath, isMobile = false) => {
   if (!profilePath) return PLACEHOLDER_PROFILE;
+  const size = isMobile ? 'w185' : 'h632';
   return `https://image.tmdb.org/t/p/${size}${profilePath}`;
 };
 

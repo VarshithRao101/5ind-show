@@ -1,7 +1,8 @@
 import React, { memo } from 'react';
 import { motion } from 'framer-motion';
 import { FiPlus, FiCheck, FiStar } from 'react-icons/fi';
-import { POSTER_BASE, PLACEHOLDER_POSTER } from '../utils/imageConstants';
+import { getPosterUrl } from '../utils/imageUtils';
+import { PLACEHOLDER_POSTER } from '../utils/imageConstants';
 import { isMobileDevice } from '../utils/isMobile';
 
 const MovieCard = memo(({
@@ -83,7 +84,7 @@ const MovieCard = memo(({
           whileTap="tap"
         >
           <img
-            src={posterPath ? POSTER_BASE + posterPath : PLACEHOLDER_POSTER}
+            src={getPosterUrl(posterPath, isMobile)}
             alt={title}
             className="w-full h-full object-cover rounded-xl"
             loading="lazy"
@@ -131,7 +132,7 @@ const MovieCard = memo(({
     >
       {/* Poster with Zoom */}
       <img
-        src={posterPath ? POSTER_BASE + posterPath : PLACEHOLDER_POSTER}
+        src={getPosterUrl(posterPath, isMobile)}
         alt={title}
         className="w-full h-full object-cover rounded-xl"
         loading="lazy"

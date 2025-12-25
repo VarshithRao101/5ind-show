@@ -749,6 +749,28 @@ export async function getPersonDetailsFull(personId) {
   }
 }
 
+// Low-weight fetch for initial paint
+export async function getPersonDetails(personId) {
+  if (!personId) return null;
+  try {
+    const res = await tmdb.get(`/person/${personId}`);
+    return res.data;
+  } catch (e) {
+    return null;
+  }
+}
+
+// Separate credits fetch for lazy loading
+export async function getPersonCombinedCredits(personId) {
+  if (!personId) return null;
+  try {
+    const res = await tmdb.get(`/person/${personId}/combined_credits`);
+    return res.data;
+  } catch (e) {
+    return null;
+  }
+}
+
 export default tmdb;
 
 // PERFORMANCE OPTIMIZATION APPLIED
