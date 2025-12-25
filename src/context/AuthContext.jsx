@@ -139,7 +139,7 @@ export const AuthProvider = ({ children }) => {
     setError(null);
     try {
       const actionCodeSettings = {
-        url: `${window.location.origin}/finishSignUp`,
+        url: "https://5ind-show.vercel.app",
         handleCodeInApp: true,
       };
       await sendSignInLinkToEmail(auth, email, actionCodeSettings);
@@ -149,6 +149,23 @@ export const AuthProvider = ({ children }) => {
       const errorMsg = err.code === 'auth/invalid-email' ? 'Invalid email address' : err.message;
       setError(errorMsg);
       return { success: false, message: errorMsg };
+    }
+  }, []);
+
+  // AUTO SIGN-IN ON APP LOAD (Step 2)
+  useEffect(() => {
+    if (isSignInWithEmailLink(auth, window.location.href)) {
+      let email = window.localStorage.getItem("emailForSignIn");
+      if (!email) {
+        email = window.prompt("Please confirm your email to complete sign in");
+      }
+      signInWithEmailLink(auth, email, window.location.href)
+        .then((result) => {
+          window.localStorage.removeItem("emailForSignIn");
+          console.log("Email link auto login successful");
+          setUser(result.user); // Ensure state updates immediately
+        })
+        .catch((err) => console.error("Email link login failed", err));
     }
   }, []);
 
