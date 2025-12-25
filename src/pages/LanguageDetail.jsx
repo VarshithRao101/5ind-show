@@ -14,27 +14,28 @@ export default function LanguageDetail() {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     useEffect(() => {
-        let mounted = true;
+        let active = true;
 
-        const loadMovies = async () => {
+        async function loadData() {
             setLoading(true);
             try {
                 const data = await getTopMoviesByLanguage(langCode, 30, true, randomPage(10));
-                if (mounted) {
+                if (active) {
                     setMovies(data || []);
+                    console.log("Loaded Language movies:", (data || []).length);
                 }
             } catch (error) {
-                console.error(error);
-                if (mounted) setMovies([]);
+                console.error("Language fetch failed", error);
+                if (active) setMovies([]);
             } finally {
-                if (mounted) setLoading(false);
+                if (active) setLoading(false);
             }
-        };
+        }
 
-        loadMovies();
+        loadData();
 
         return () => {
-            mounted = false;
+            active = false;
         };
     }, [langCode, refreshTrigger]);
 

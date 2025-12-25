@@ -15,28 +15,29 @@ export default function DubbedDetail() {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     useEffect(() => {
-        let mounted = true;
+        let active = true;
 
-        const loadMovies = async () => {
+        async function loadData() {
             setLoading(true);
             try {
                 const data = await getDubbedMovies(langCode, 30, true, randomPage(8));
-                if (mounted) {
+                if (active) {
                     setMovies(data || []);
                     setGridKey(k => k + 1);
+                    console.log("Loaded Dubbed movies:", (data || []).length);
                 }
             } catch (error) {
-                console.error(error);
-                if (mounted) setMovies([]);
+                console.error("Dubbed fetch failed", error);
+                if (active) setMovies([]);
             } finally {
-                if (mounted) setLoading(false);
+                if (active) setLoading(false);
             }
-        };
+        }
 
-        loadMovies();
+        loadData();
 
         return () => {
-            mounted = false;
+            active = false;
         };
     }, [langCode, refreshTrigger]);
 

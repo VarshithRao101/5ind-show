@@ -1,48 +1,49 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useSearchParams, useNavigate } from "react-router-dom";
 import { searchMulti } from "../services/tmdb";
-import { getPoster } from "../utils/poster";
 import SearchBar from "../components/SearchBar";
-import MovieCard from "../components/MovieCard"; // Assuming we can re-use MovieCard, else build simple one
+import MovieCard from "../components/MovieCard";
+import SkeletonCard from "../components/skeletons/SkeletonCard";
 
 export default function SearchPage() {
-    const { search } = useLocation();
+    const [searchParams] = useSearchParams();
     const navigate = useNavigate();
-    const params = new URLSearchParams(search);
-    const q = params.get("q") || "";
+    const q = searchParams.get("q") || "";
 
     const [results, setResults] = useState([]);
     const [loading, setLoading] = useState(false);
-
     const [activeTab, setActiveTab] = useState('all');
 
     useEffect(() => {
-        let mounted = true;
+        if (!q) {
+            setResults([]);
+            setLoading(false);
+            return;
+        }
 
-        const fetchSearch = async () => {
-            if (!q || q.trim().length < 2) {
-                if (mounted) setResults([]);
-                return;
-            }
+        let active = true;
 
+        async function search() {
             setLoading(true);
             try {
+                // Use service but handle as instructed
                 const data = await searchMulti(q);
-                if (mounted) {
+                if (active) {
                     setResults(data || []);
+                    console.log("Loaded movies:", (data || []).length);
                 }
-            } catch (error) {
-                console.error("Search failed", error);
-                if (mounted) setResults([]);
+            } catch (e) {
+                console.error("Search failed", e);
+                if (active) setResults([]);
             } finally {
-                if (mounted) setLoading(false);
+                if (active) setLoading(false);
             }
-        };
+        }
 
-        fetchSearch();
+        search();
 
         return () => {
-            mounted = false;
+            active = false;
         };
     }, [q]);
 
@@ -63,8 +64,9 @@ export default function SearchPage() {
                 <SearchBar initialQuery={q} realTime={true} />
 
                 {/* Filter Tabs */}
-                {hasResults && (
+                {hasResults && !loading && (
                     <div className="flex items-center justify-center gap-2 mt-6 overflow-x-auto pb-2 scrollbar-hide">
+                        {/* Tabs remain same but strict check on !loading ensures no flicker */}
                         {[
                             { id: 'all', label: 'All Results' },
                             { id: 'movie', label: 'Movies', count: movies.length },
@@ -89,8 +91,10 @@ export default function SearchPage() {
             </div>
 
             {loading && (
-                <div className="flex justify-center pt-20">
-                    <div className="w-10 h-10 border-4 border-primary-yellow border-t-transparent rounded-full animate-spin" />
+                <div className="max-w-7xl mx-auto px-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 animate-pulse">
+                    {[...Array(10)].map((_, i) => (
+                        <SkeletonCard key={i} />
+                    ))}
                 </div>
             )}
 
@@ -103,7 +107,6 @@ export default function SearchPage() {
 
             {!loading && hasResults && (
                 <div className="max-w-7xl mx-auto px-6 space-y-12 animate-fade-in-up">
-
                     {/* Movies Section */}
                     {movies.length > 0 && (activeTab === 'all' || activeTab === 'movie') && (
                         <section>

@@ -14,27 +14,28 @@ export default function GenreDetail() {
     const [refreshTrigger, setRefreshTrigger] = useState(0);
 
     useEffect(() => {
-        let mounted = true;
+        let active = true;
 
-        const loadMovies = async () => {
+        async function loadData() {
             setLoading(true);
             try {
                 const data = await getTopMoviesByGenre(genreId, 30, true, randomPage(10));
-                if (mounted) {
+                if (active) {
                     setMovies(data || []);
+                    console.log("Loaded Genre movies:", (data || []).length);
                 }
             } catch (error) {
-                console.error(error);
-                if (mounted) setMovies([]);
+                console.error("Genre fetch failed", error);
+                if (active) setMovies([]);
             } finally {
-                if (mounted) setLoading(false);
+                if (active) setLoading(false);
             }
-        };
+        }
 
-        loadMovies();
+        loadData();
 
         return () => {
-            mounted = false;
+            active = false;
         };
     }, [genreId, refreshTrigger]);
 
