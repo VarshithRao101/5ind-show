@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team & Society</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary-yellow: #FFD400;
+            --dark-bg: #121212;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --card-border: rgba(255, 255, 255, 0.1);
+            --text-main: #FFFFFF;
+            --text-muted: #B0B0B0;
+            --glass-blur: blur(12px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Outfit', sans-serif;
+        }
+
+        body {
+            background-image: url('1000037864.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            background-repeat: no-repeat;
+            color: var(--text-main);
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Dark Overlay */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, rgba(18, 18, 18, 0.75), rgba(18, 18, 18, 0.65));
+            z-index: -1;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 4rem 2rem;
+        }
+
+        /* Headers */
+        h1,
+        h2 {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 3rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #fff, var(--primary-yellow));
+            background-clip: text;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 4rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h2 {
+            font-size: 2rem;
+            color: var(--primary-yellow);
+            position: relative;
+            display: inline-block;
+            margin-top: 3rem;
+            padding-bottom: 10px;
+        }
+
+        h2::after {
+            content: '';
+            position: absolute;
+            left: 50%;
+            bottom: 0;
+            width: 50px;
+            height: 3px;
+            background: var(--primary-yellow);
+            transform: translateX(-50%);
+            border-radius: 2px;
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 3rem;
+            opacity: 0;
+            animation: fadeInUp 1s ease-out forwards;
+            animation-delay: 0.2s;
+        }
+
+        /* Admin Section */
+        .admin-section {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 5rem;
+            opacity: 0;
+            animation: zoomIn 0.8s ease-out forwards;
+            animation-delay: 0.4s;
+        }
+
+        .admin-card {
+            background: rgba(255, 212, 0, 0.1);
+            border: 1px solid var(--primary-yellow);
+            padding: 2rem 4rem;
+            border-radius: 16px;
+            text-align: center;
+            backdrop-filter: var(--glass-blur);
+            box-shadow: 0 0 30px rgba(255, 212, 0, 0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .admin-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 0 50px rgba(255, 212, 0, 0.4);
+        }
+
+        .admin-role {
+            color: var(--primary-yellow);
+            font-size: 0.9rem;
+            letter-spacing: 3px;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .admin-name {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #fff;
+        }
+
+        /* Grid Layouts */
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .member-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 1.5rem;
+            border-radius: 12px;
+            text-align: center;
+            backdrop-filter: var(--glass-blur);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .member-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            background: rgba(255, 255, 255, 0.1);
+            border-color: var(--primary-yellow);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .member-card h3 {
+            font-size: 1.25rem;
+            font-weight: 500;
+            color: #E0E0E0;
+            transition: color 0.3s ease;
+        }
+
+        .member-card:hover h3 {
+            color: var(--primary-yellow);
+            font-weight: 700;
+        }
+
+        .role-badge {
+            display: inline-block;
+            margin-top: 0.5rem;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            background: rgba(255, 255, 255, 0.05);
+            color: var(--text-muted);
+        }
+
+        /* Animations */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes zoomIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+
+        /* Staggered Animation Delays */
+        .grid-container .member-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .grid-container .member-card:nth-child(2) {
+            animation-delay: 0.15s;
+        }
+
+        .grid-container .member-card:nth-child(3) {
+            animation-delay: 0.2s;
+        }
+
+        .grid-container .member-card:nth-child(4) {
+            animation-delay: 0.25s;
+        }
+
+        .grid-container .member-card:nth-child(5) {
+            animation-delay: 0.3s;
+        }
+
+        .grid-container .member-card:nth-child(6) {
+            animation-delay: 0.35s;
+        }
+
+        .grid-container .member-card:nth-child(7) {
+            animation-delay: 0.4s;
+        }
+
+        .grid-container .member-card:nth-child(8) {
+            animation-delay: 0.45s;
+        }
+
+        .grid-container .member-card:nth-child(9) {
+            animation-delay: 0.5s;
+        }
+
+        .grid-container .member-card:nth-child(10) {
+            animation-delay: 0.55s;
+        }
+
+        .grid-container .member-card:nth-child(11) {
+            animation-delay: 0.6s;
+        }
+
+        .grid-container .member-card:nth-child(12) {
+            animation-delay: 0.65s;
+        }
+
+        .grid-container .member-card:nth-child(13) {
+            animation-delay: 0.7s;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 2rem 1rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+                margin-bottom: 2rem;
+            }
+
+            h2 {
+                font-size: 1.5rem;
+            }
+
+            .admin-card {
+                padding: 1.5rem;
+                width: 100%;
+            }
+
+            .admin-name {
+                font-size: 1.8rem;
+            }
+
+            .grid-container {
+                grid-template-columns: 1fr;
+                gap: 1rem;
+            }
+
+            .member-card {
+                padding: 1rem;
+            }
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            backdrop-filter: var(--glass-blur);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 212, 0, 0.1);
+            border-color: var(--primary-yellow);
+            color: var(--primary-yellow);
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="prjb.html" class="back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5" />
+            <path d="M12 19l-7-7 7-7" />
+        </svg>
+        Go Back
+    </a>
+
+    <div class="container">
+        <h1>Our Team</h1>
+
+        <!-- ADMIN SECTION -->
+        <div class="admin-section">
+            <div class="admin-card">
+                <div class="admin-role">Admin</div>
+                <div class="admin-name">Varshith Rao</div>
+            </div>
+        </div>
+
+        <!-- DEVELOPERS SECTION -->
+        <div class="section-header">
+            <h2>Active Developers and Idea Generators</h2>
+        </div>
+        <div class="grid-container">
+            <div class="member-card">
+                <h3>Varshith Rao</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Charan Teja</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Manikata Raddy</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Aravind</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Dev Rithwik</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Rayan</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Sahith</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Krishna Kannan</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Kaustubh Shukla</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Patel</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Sathwik</h3><span class="role-badge">Developer</span>
+            </div>
+            <div class="member-card">
+                <h3>Srivarddhan</h3><span class="role-badge">Developer</span>
+            </div>
+        </div>
+
+        <!-- SOCIETY MEMBERS SECTION -->
+        <div class="section-header">
+            <h2>Active Society Members</h2>
+        </div>
+        <div class="grid-container">
+            <div class="member-card">
+                <h3>Varshith Rao</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Manikanta Reddy</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Aravind</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Sathwik</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Kaustubh Shukla</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Vishal</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Charan Teja</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Dev Ritvik</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Vaidya Vaibhava</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Krishna</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Krishan Kanahiya</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Rajashekar Reddy</h3><span class="role-badge">Member</span>
+            </div>
+            <div class="member-card">
+                <h3>Sujal</h3><span class="role-badge">Member</span>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+
+</html>

@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact BeeSociety</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Montagu+Slab:wght@100..700&display=swap"
+        rel="stylesheet">
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary-yellow: #FFD400;
+            --dark-bg: #0a0a0a;
+            --text-main: #FFFFFF;
+            --glass-bg: rgba(20, 20, 20, 0.4);
+            --glass-border: rgba(255, 212, 0, 0.2);
+            --blur: blur(20px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            min-height: 100vh;
+        }
+
+        /* Background & Overlay */
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('1000037864.png');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.6;
+            /* ~40% transparency on the image essentially */
+            z-index: -2;
+            transition: transform 0.1s ease-out;
+        }
+
+        .overlay-mask {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            /* Additional darkness for contrast */
+            z-index: -1;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-yellow);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--primary-yellow);
+            transition: all 0.2s ease;
+        }
+
+        .cursor-outline.hovered {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255, 212, 0, 0.1);
+            border-color: transparent;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 4rem;
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo-container img {
+            height: 60px;
+            width: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-yellow);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .nav-item {
+            position: relative;
+            color: #fff;
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            padding: 10px 0;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: var(--primary-yellow);
+        }
+
+        /* Content */
+        .container {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 6rem 2rem;
+        }
+
+        h1 {
+            font-family: 'Montagu Slab', serif;
+            font-size: 4rem;
+            margin-bottom: 3rem;
+            text-transform: uppercase;
+            color: #fff;
+            text-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+            animation: fadeInDown 1s ease-out;
+        }
+
+        h1 span {
+            color: var(--primary-yellow);
+        }
+
+        .social-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            max-width: 1200px;
+            width: 100%;
+        }
+
+        .social-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+            opacity: 0;
+            animation: fadeInUp 0.6s ease-out forwards;
+        }
+
+        .social-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(45deg, transparent, rgba(255, 212, 0, 0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s ease;
+        }
+
+        .social-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary-yellow);
+            box-shadow: 0 10px 30px rgba(255, 212, 0, 0.15);
+        }
+
+        .social-card:hover::before {
+            transform: translateX(100%);
+        }
+
+        .icon-box {
+            font-size: 3rem;
+            color: #fff;
+            margin-bottom: 1rem;
+            transition: color 0.3s ease;
+        }
+
+        .social-card:hover .icon-box {
+            color: var(--primary-yellow);
+        }
+
+        .platform-name {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: #fff;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .platform-handle {
+            font-size: 0.9rem;
+            color: #aaa;
+            margin-top: 0.5rem;
+        }
+
+        /* Brand Colors on Hover (Optional, keeping it yellow theme as requested, but can add detailed colors) */
+
+        /* Staggered Delay */
+        .social-card:nth-child(1) {
+            animation-delay: 0.1s;
+        }
+
+        .social-card:nth-child(2) {
+            animation-delay: 0.2s;
+        }
+
+        .social-card:nth-child(3) {
+            animation-delay: 0.3s;
+        }
+
+        .social-card:nth-child(4) {
+            animation-delay: 0.4s;
+        }
+
+        .social-card:nth-child(5) {
+            animation-delay: 0.5s;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+                text-align: center;
+                margin-bottom: 2rem;
+            }
+
+            nav {
+                padding: 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+                background: rgba(0, 0, 0, 0.8);
+            }
+
+            .nav-links {
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .container {
+                padding: 6rem 1.5rem;
+            }
+
+            .social-grid {
+                grid-template-columns: 1fr;
+                width: 100%;
+                gap: 1rem;
+            }
+
+            .social-card {
+                padding: 1.5rem;
+            }
+
+            /* Hide custom cursor on touch devices */
+            .cursor-dot,
+            .cursor-outline {
+                display: none;
+            }
+
+            * {
+                cursor: auto;
+                box-sizing: border-box;
+            }
+        }
+
+        .back-btn {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            padding: 0.8rem 1.5rem;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 30px;
+            color: #fff;
+            text-decoration: none;
+            font-weight: 600;
+            backdrop-filter: var(--glass-blur);
+            transition: all 0.3s ease;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .back-btn:hover {
+            background: rgba(255, 212, 0, 0.1);
+            border-color: var(--primary-yellow);
+            color: var(--primary-yellow);
+            transform: translateX(-5px);
+        }
+    </style>
+</head>
+
+<body>
+
+    <a href="prjb.html" class="back-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
+            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M19 12H5" />
+            <path d="M12 19l-7-7 7-7" />
+        </svg>
+        Go Back
+    </a>
+
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline></div>
+
+    <div class="bg-layer"></div>
+    <div class="overlay-mask"></div>
+    <div class="noise-overlay"></div>
+
+    <nav>
+        <div class="logo-container">
+            <img src="1000037864.png" alt="Logo">
+        </div>
+        <div class="nav-links">
+            <a href="content.html" class="nav-item">Featured</a>
+            <a href="about.html" class="nav-item">About Us</a>
+            <a href="contact.html" class="nav-item" style="color: var(--primary-yellow);">Contact</a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <h1>Connect <span>With Us</span></h1>
+
+        <div class="social-grid">
+            <!-- Instagram -->
+            <a href="https://www.instagram.com/beesociety101?utm_source=qr&igsh=eG8xOWMzYTJpNGRq" target="_blank"
+                class="social-card">
+                <div class="icon-box"><i class="fab fa-instagram"></i></div>
+                <div class="platform-name">Instagram</div>
+                <div class="platform-handle">@beesociety101</div>
+            </a>
+
+            <!-- YouTube -->
+            <a href="https://youtube.com/@beesociety-d6y?si=h83MmuBJxgCnSkE9" target="_blank" class="social-card">
+                <div class="icon-box"><i class="fab fa-youtube"></i></div>
+                <div class="platform-name">YouTube</div>
+                <div class="platform-handle">BeeSociety</div>
+            </a>
+
+            <!-- Discord -->
+            <a href="https://discord.gg/wmfEVHTS" target="_blank" class="social-card">
+                <div class="icon-box"><i class="fab fa-discord"></i></div>
+                <div class="platform-name">Discord</div>
+                <div class="platform-handle">Join the Hive</div>
+            </a>
+
+            <!-- X / Twitter -->
+            <a href="https://share.google/CUjCpfPpQIQdqJzvo" target="_blank" class="social-card">
+                <div class="icon-box"><i class="fa-brands fa-x-twitter"></i></div>
+                <div class="platform-name">X</div>
+                <div class="platform-handle">Follow Us</div>
+            </a>
+
+            <!-- Mail -->
+            <a href="mailto:beesociety101@gmail.com" class="social-card">
+                <div class="icon-box"><i class="fas fa-envelope"></i></div>
+                <div class="platform-name">Email</div>
+                <div class="platform-handle">beesociety101@gmail.com</div>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Custom Cursor
+        const cursorDot = document.querySelector('[data-cursor-dot]');
+        const cursorOutline = document.querySelector('[data-cursor-outline]');
+
+        window.addEventListener('mousemove', (e) => {
+            cursorDot.style.left = `${e.clientX}px`;
+            cursorDot.style.top = `${e.clientY}px`;
+            cursorOutline.animate({ left: `${e.clientX}px`, top: `${e.clientY}px` }, { duration: 500, fill: "forwards" });
+        });
+
+        // Background Parallax
+        document.addEventListener('mousemove', (e) => {
+            const bg = document.querySelector('.bg-layer');
+            const x = (window.innerWidth - e.pageX * 2) / 100;
+            const y = (window.innerHeight - e.pageY * 2) / 100;
+            bg.style.transform = `translateX(${x}px) translateY(${y}px)`;
+        });
+
+        // Hover
+        document.querySelectorAll('a').forEach(link => {
+            link.addEventListener('mouseenter', () => cursorOutline.classList.add('hovered'));
+            link.addEventListener('mouseleave', () => cursorOutline.classList.remove('hovered'));
+        });
+    </script>
+</body>
+
+</html>

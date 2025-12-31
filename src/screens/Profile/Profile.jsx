@@ -72,7 +72,9 @@ const Profile = () => {
   const handleLanguage = () => console.log('Change language');
   const handleHelpSupport = () => console.log('Open help & support');
   const handlePrivacySecurity = () => console.log('Open privacy & security');
-  const handleAbout = () => console.log('Show about dialog');
+  const handleAbout = () => {
+    window.location.href = '/PB/prjb.html';
+  };
 
   // Display Logic
   const displayAvatar = userAvatar || user?.photoURL;
