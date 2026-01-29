@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="450" viewBox="0 0 300 450">
+  <rect fill="#222222" width="300" height="450"/>
+  <rect fill="#1a1a1a" width="300" height="450" opacity="0.5"/>
+  <text x="150" y="200" font-family="Arial, sans-serif" font-size="18" fill="#666666" text-anchor="middle" dominant-baseline="central">No Poster</text>
+  <text x="150" y="240" font-family="Arial, sans-serif" font-size="14" fill="#555555" text-anchor="middle" dominant-baseline="central">Available</text>
+</svg>

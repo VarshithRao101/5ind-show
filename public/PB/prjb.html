@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BeeSociety | Innovation Hub</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Montagu+Slab:wght@100..700&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary-yellow: #FFD400;
+            --dark-bg: #0a0a0a;
+            --text-main: #FFFFFF;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --blur: blur(20px);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+            /* Hide default cursor for custom one */
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-main);
+            font-family: 'Outfit', sans-serif;
+            overflow-x: hidden;
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Background Image with Parallax functionality via JS or fixed */
+        .bg-layer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('20573.jpg');
+            background-size: cover;
+            background-position: center;
+            opacity: 0.4;
+            z-index: -2;
+            transition: transform 0.1s ease-out;
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.05'/%3E%3C/svg%3E");
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* Custom Cursor */
+        .cursor-dot,
+        .cursor-outline {
+            position: fixed;
+            top: 0;
+            left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+
+        .cursor-dot {
+            width: 8px;
+            height: 8px;
+            background-color: var(--primary-yellow);
+        }
+
+        .cursor-outline {
+            width: 40px;
+            height: 40px;
+            border: 1px solid var(--primary-yellow);
+            transition: width 0.2s, height 0.2s, background-color 0.2s;
+        }
+
+        body:hover .cursor-outline.hovered {
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255, 212, 0, 0.1);
+            border-color: transparent;
+        }
+
+        /* Navigation */
+        nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 2rem 4rem;
+            z-index: 100;
+        }
+
+        .logo-container img {
+            height: 60px;
+            width: 60px;
+            border-radius: 50%;
+            border: 2px solid var(--primary-yellow);
+            transition: transform 0.3s ease;
+        }
+
+        .logo-container img:hover {
+            transform: rotate(15deg) scale(1.1);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+        }
+
+        .nav-item {
+            position: relative;
+            color: #fff;
+            /* Explicit color for visibility */
+            text-decoration: none;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 600;
+            padding: 10px 0;
+            overflow: hidden;
+            transition: color 0.3s ease;
+        }
+
+        .nav-item::before {
+            content: attr(data-text);
+            position: absolute;
+            top: 100%;
+            left: 0;
+            width: 100%;
+            color: var(--primary-yellow);
+            transition: top 0.3s ease;
+        }
+
+        .nav-item:hover {
+            color: transparent;
+        }
+
+        .nav-item:hover::before {
+            top: 0;
+        }
+
+        /* Hero Main */
+        .hero-section {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0 4rem;
+            position: relative;
+            perspective: 1000px;
+            /* For 3D text effects */
+        }
+
+        .hero-title {
+            font-family: 'Montagu Slab', serif;
+            font-size: 8vw;
+            font-weight: 800;
+            line-height: 0.9;
+            text-transform: uppercase;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+
+        .line-1 {
+            color: var(--text-main);
+            transform-origin: left;
+            opacity: 0;
+            animation: textReveal 1s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.2s;
+        }
+
+        .line-2 {
+            -webkit-text-stroke: 2px var(--primary-yellow);
+            color: transparent;
+            margin-left: 10vw;
+            opacity: 0;
+            animation: textReveal 1s cubic-bezier(0.2, 1, 0.3, 1) forwards 0.4s;
+            transition: color 0.5s ease;
+        }
+
+        .line-2:hover {
+            color: rgba(255, 212, 0, 0.1);
+            cursor: pointer;
+        }
+
+        /* Floating Quote Card */
+        .glass-card {
+            position: absolute;
+            bottom: 4rem;
+            right: 4rem;
+            width: 400px;
+            padding: 2.5rem;
+            background: var(--glass-bg);
+            backdrop-filter: var(--blur);
+            border: 1px solid var(--glass-border);
+            border-left: 4px solid var(--primary-yellow);
+            border-radius: 4px;
+            /* Brutalist edge */
+            opacity: 0;
+            animation: cardFloatUp 1s ease-out forwards 0.8s;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .glass-card:hover {
+            transform: translateY(-10px) rotateX(5deg) rotateY(-5deg);
+            box-shadow: -20px 20px 40px rgba(0, 0, 0, 0.5);
+        }
+
+        .glass-card p {
+            font-size: 1.3rem;
+            /* Slightly larger */
+            line-height: 2.2;
+            /* Much more breathing room */
+            color: #d0d0d0;
+            font-family: 'Outfit', sans-serif;
+            font-weight: 300;
+            letter-spacing: 0.5px;
+        }
+
+        .highlight {
+            color: var(--primary-yellow);
+            font-weight: 600;
+        }
+
+        /* Decorative Elements */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            opacity: 0.6;
+            animation: bounce 2s infinite;
+        }
+
+        .scroll-text {
+            font-size: 0.7rem;
+            letter-spacing: 3px;
+            margin-bottom: 0.5rem;
+            text-transform: uppercase;
+        }
+
+        .line {
+            width: 1px;
+            height: 40px;
+            background: var(--primary-yellow);
+        }
+
+        /* Animations */
+        @keyframes textReveal {
+            from {
+                opacity: 0;
+                transform: translateX(-100px) rotateY(10deg);
+                filter: blur(10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0) rotateY(0);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes cardFloatUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0) translateX(-50%);
+            }
+
+            40% {
+                transform: translateY(-10px) translateX(-50%);
+            }
+
+            60% {
+                transform: translateY(-5px) translateX(-50%);
+            }
+        }
+
+        /* Responsive */
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .hero-title {
+                font-size: 10vw;
+            }
+
+            .glass-card {
+                width: 80%;
+                right: 50%;
+                transform: translateX(50%);
+                bottom: 8rem;
+            }
+
+            .glass-card:hover {
+                transform: translateX(50%) translateY(-10px);
+            }
+        }
+
+        @media (max-width: 768px) {
+            nav {
+                padding: 1.5rem;
+                flex-direction: column;
+                gap: 1rem;
+                background: rgba(0, 0, 0, 0.8);
+            }
+
+            .nav-links {
+                gap: 1.5rem;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .hero-section {
+                padding: 8rem 1rem 3rem;
+                text-align: center;
+                overflow: hidden;
+            }
+
+            .hero-title {
+                font-size: 10vw;
+                /* Reduced from 14vw to prevent overflow */
+                width: 100%;
+                align-items: center;
+                line-height: 1.1;
+                margin-bottom: 2rem;
+            }
+
+            .line-1,
+            .line-2 {
+                margin-left: 0;
+                text-align: center;
+                width: 100%;
+            }
+
+            .glass-card {
+                position: relative;
+                width: 95%;
+                right: auto;
+                bottom: auto;
+                transform: none;
+                padding: 1.5rem;
+                margin: 0 auto;
+            }
+
+            .glass-card:hover {
+                transform: none;
+            }
+
+            .glass-card p {
+                font-size: 1rem;
+                line-height: 1.6;
+            }
+
+            /* Hide custom cursor on touch devices */
+            .cursor-dot,
+            .cursor-outline {
+                display: none;
+            }
+
+            * {
+                cursor: auto;
+                box-sizing: border-box;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cursor-dot" data-cursor-dot></div>
+    <div class="cursor-outline" data-cursor-outline></div>
+
+    <div class="bg-layer" id="bgLayer"></div>
+    <div class="noise-overlay"></div>
+
+    <!-- Nav -->
+    <nav>
+        <div class="logo-container">
+            <img src="1000037864.png" alt="Logo">
+        </div>
+        <div class="nav-links">
+            <a href="content.html" class="nav-item" data-text="Featured">Featured</a>
+            <a href="about.html" class="nav-item" data-text="About Us">About Us</a>
+            <a href="contact.html" class="nav-item" data-text="Contact">Contact</a>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="hero-section">
+        <div class="hero-title">
+            <div class="line-1">BE CREATIVE</div>
+            <div class="line-2">BE INNOVATIVE</div>
+        </div>
+
+        <div class="glass-card">
+            <p>
+                "<span class="highlight">Bee Society</span>, founded by our fellow students,<br>
+                is a place where we stand together,<br>
+                <span class="highlight">rise together</span>,<br>
+                and overcome challenges together."
+            </p>
+        </div>
+
+        <div class="scroll-indicator">
+            <span class="scroll-text">Explore</span>
+            <div class="line"></div>
+        </div>
+    </main>
+
+    <script>
+        // Custom Cursor Logic
+        const cursorDot = document.querySelector('[data-cursor-dot]');
+        const cursorOutline = document.querySelector('[data-cursor-outline]');
+
+        window.addEventListener('mousemove', function (e) {
+            const posX = e.clientX;
+            const posY = e.clientY;
+
+            cursorDot.style.left = `${posX}px`;
+            cursorDot.style.top = `${posY}px`;
+
+            // Add delay to outline for smooth feel
+            cursorOutline.animate({
+                left: `${posX}px`,
+                top: `${posY}px`
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Hover effect for links to expand cursor
+        const links = document.querySelectorAll('a, .glass-card');
+        links.forEach(link => {
+            link.addEventListener('mouseenter', () => {
+                cursorOutline.classList.add('hovered');
+            });
+            link.addEventListener('mouseleave', () => {
+                cursorOutline.classList.remove('hovered');
+            });
+        });
+
+        // Parallax Effect for Background
+        document.addEventListener('mousemove', (e) => {
+            const bg = document.querySelector('.bg-layer');
+            const x = (window.innerWidth - e.pageX * 2) / 100;
+            const y = (window.innerHeight - e.pageY * 2) / 100;
+
+            bg.style.transform = `translateX(${x}px) translateY(${y}px)`;
+        });
+    </script>
+</body>
+
+</html>
