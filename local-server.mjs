@@ -3,6 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import handler from './api/tmdb.js';
+import omdbHandler from './api/omdb.js';
 
 dotenv.config();
 
@@ -32,6 +33,22 @@ app.all('/api/tmdb', async (req, res) => {
         await handler(req, responseAdapter);
     } catch (e) {
         console.error("Local Server Error:", e);
+        res.status(500).json({ error: "Local Server Error" });
+    }
+});
+
+// Emulate Vercel OMDb
+app.all('/api/omdb', async (req, res) => {
+    const responseAdapter = {
+        setHeader: (key, val) => res.setHeader(key, val),
+        status: (code) => { res.status(code); return responseAdapter; },
+        json: (data) => res.json(data),
+        end: () => res.end()
+    };
+    try {
+        await omdbHandler(req, responseAdapter);
+    } catch (e) {
+        console.error("Local OMDb Error:", e);
         res.status(500).json({ error: "Local Server Error" });
     }
 });

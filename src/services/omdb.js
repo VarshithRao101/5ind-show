@@ -1,18 +1,24 @@
+
 import axios from 'axios';
 
-const OMDB_API_KEY = process.env.REACT_APP_OMDB_API_KEY;
+// Point to local proxy (matches tmdb service pattern)
+// No process.env usage here - strictly runtime config via API
+const omdb = axios.create({
+    baseURL: "/api/omdb",
+    timeout: 5000
+});
 
 export const getRottenTomatoesScore = async (imdbId) => {
-    // Debug log to check if key is loaded (don't log the full key in prod, but for local debugging it's helpful)
-    if (!OMDB_API_KEY) {
-        console.warn("OMDB_API_KEY is missing. Rotten Tomatoes scores will not load.");
-        return null;
-    }
     if (!imdbId) return null;
 
     try {
-        const response = await axios.get(`https://www.omdbapi.com/?apikey=${OMDB_API_KEY}&i=${imdbId}`);
+        // Call our proxy: /api/omdb?i=tt123456
+        const response = await omdb.get("", {
+            params: { i: imdbId }
+        });
+
         const data = response.data;
+        if (!data || data.error) return null;
 
         if (data.Ratings) {
             const rtRating = data.Ratings.find(r => r.Source === "Rotten Tomatoes");
@@ -20,7 +26,9 @@ export const getRottenTomatoesScore = async (imdbId) => {
         }
         return null;
     } catch (error) {
-        console.error("OMDB Fetch Error", error);
+        // Silent fail for UI resilience
+        console.warn("OMDb fetch failed via proxy", error.message);
         return null;
     }
 };
+
