@@ -5,12 +5,12 @@ import { FiArrowRight, FiMail } from 'react-icons/fi';
 import { FcGoogle } from 'react-icons/fc';
 import { FaApple } from 'react-icons/fa';
 import { AuthContext } from '../../context/AuthContext';
-import { UserContext } from '../../context/UserContext';
+// import { UserContext } from '../../context/UserContext';
 
 const Login = () => {
   const navigate = useNavigate();
   const { sendLoginLink, googleLogin, appleLogin, loginAsGuest, isGuest } = useContext(AuthContext);
-  const { darkTheme } = useContext(UserContext);
+  // const { darkTheme } = useContext(UserContext);
   const [email, setEmail] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);

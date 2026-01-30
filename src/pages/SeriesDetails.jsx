@@ -1,7 +1,7 @@
 // SERIES PAGE STRUCTURED LIKE MOVIE DETAILS (3-COLUMN)
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { FiArrowLeft, FiStar, FiCalendar, FiClock, FiLayers, FiActivity, FiUser } from 'react-icons/fi';
+import { FiArrowLeft, FiStar, FiClock, FiActivity, FiUser } from 'react-icons/fi';
 import {
     getTvDetails,
     getSeasonDetails,
@@ -11,12 +11,12 @@ import {
     POSTER_BASE
 } from '../services/tmdb';
 import MovieCard from '../components/MovieCard';
-import { isMobileDevice } from '../utils/isMobile';
+// import { isMobileDevice } from '../utils/isMobile';
 
 const SeriesDetails = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const isMobile = isMobileDevice();
+    // const isMobile = isMobileDevice();
 
     const [details, setDetails] = useState(null);
     const [selectedSeason, setSelectedSeason] = useState(1);
@@ -227,8 +227,8 @@ const SeriesDetails = () => {
                                     key={season.id}
                                     onClick={() => setSelectedSeason(season.season_number)}
                                     className={`px-4 py-2 rounded-full whitespace-nowrap text-sm font-bold transition-all border ${selectedSeason === season.season_number
-                                            ? "bg-primary-yellow text-black border-primary-yellow"
-                                            : "bg-[#1f1f1f] text-gray-400 border-white/10"
+                                        ? "bg-primary-yellow text-black border-primary-yellow"
+                                        : "bg-[#1f1f1f] text-gray-400 border-white/10"
                                         }`}
                                 >
                                     Season {season.season_number}
@@ -243,8 +243,8 @@ const SeriesDetails = () => {
                                     key={season.id}
                                     onClick={() => setSelectedSeason(season.season_number)}
                                     className={`w-full text-left px-4 py-3 rounded-xl text-sm font-medium transition-all ${selectedSeason === season.season_number
-                                            ? "bg-primary-yellow text-black shadow-lg shadow-yellow-500/10"
-                                            : "bg-[#1a1a1a] text-gray-400 hover:bg-[#252525] border border-transparent hover:border-white/5"
+                                        ? "bg-primary-yellow text-black shadow-lg shadow-yellow-500/10"
+                                        : "bg-[#1a1a1a] text-gray-400 hover:bg-[#252525] border border-transparent hover:border-white/5"
                                         }`}
                                 >
                                     <div className="flex justify-between items-center">

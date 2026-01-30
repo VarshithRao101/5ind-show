@@ -2,7 +2,7 @@
 import React, { useContext, useMemo } from 'react';
 import { WatchlistContext } from '../../context/WatchlistContext';
 import { useNavigate } from 'react-router-dom';
-import { FiArchive, FiTrash2 } from 'react-icons/fi';
+import { FiArchive } from 'react-icons/fi';
 
 import MovieCard from '../../components/MovieCard';
 

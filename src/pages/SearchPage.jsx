@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext, useMemo } from "react";
-import { isMobileDevice } from "../utils/isMobile";
+// import { isMobileDevice } from "../utils/isMobile"; // Unused import removed
 import { useSearchParams, useNavigate } from "react-router-dom";
 import { searchMulti } from "../services/tmdb";
 import SearchBar from "../components/SearchBar";

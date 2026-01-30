@@ -17,9 +17,7 @@ import SkeletonCard from '../components/skeletons/SkeletonCard';
 import { WatchlistContext } from '../context/WatchlistContext';
 import { UserContext } from '../context/UserContext';
 import { FilterContext } from '../context/FilterContext';
-import { AuthContext } from '../context/AuthContext';
 import { getPoster } from "../utils/poster";
-import { getRating } from '../utils/getRating';
 import { getGenreName } from '../utils/genreMap';
 
 // Hero Slide Component
@@ -123,7 +121,6 @@ export default function HomePage() {
     const isMobile = isMobileDevice();
     const navigate = useNavigate();
     const {
-        savedForLater,
         addToWatchlist,
         removeFromWatchlist,
         checkIfInWatchlist
