@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import { FiMessageSquare, FiX, FiMinimize2 } from 'react-icons/fi';
+import { FiMessageSquare, FiX } from 'react-icons/fi';
 import ChatInput from './ChatInput';
 import ChatMessage from './ChatMessage';
 import { processUserMessage } from './chatUtils';

@@ -43,19 +43,7 @@ const FilterModal = () => {
         { code: 'fr', name: 'French' },
     ];
 
-    // Years
-    const years = [
-        { val: null, label: 'All Time' },
-        { val: '2025', label: '2025' },
-        { val: '2024', label: '2024' },
-        { val: '2023', label: '2023' },
-        { val: '2022', label: '2022' },
-        { val: '2020-2021', label: '2020-2021' },
-        { val: '2010-2019', label: '2010s' },
-        { val: '2000-2009', label: '2000s' },
-        { val: '1990-1999', label: '90s' },
-        { val: '1980-1989', label: '80s' },
-    ];
+    // Footer
 
     return (
         <AnimatePresence>

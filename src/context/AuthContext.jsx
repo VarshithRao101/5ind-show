@@ -33,7 +33,7 @@ export const AuthProvider = ({ children }) => {
   // GUEST-FIRST DEFAULT STATE (Non-blocking)
   // We assume Guest mode immediately so the UI renders without waiting.
   const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(false); // No longer blocking
+  const [loading] = useState(false); // No longer blocking
   const [error, setError] = useState(null);
   const [isGuest, setIsGuest] = useState(true); // Default to True
   const [username, setUsername] = useState('Guest'); // Default to Guest

@@ -2,11 +2,11 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { FiSearch, FiFilter, FiUser, FiZap, FiX, FiBell, FiHeart, FiTv, FiAlertCircle, FiCheckSquare } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
-import { UserContext } from '../context/UserContext';
+// import { UserContext } from '../context/UserContext';
 import { AuthContext } from '../context/AuthContext';
 import { FilterContext } from '../context/FilterContext';
 import { WatchlistContext } from '../context/WatchlistContext';
-import SmartImage from './SmartImage';
+// import SmartImage from './SmartImage';
 import { getTrendingAll } from '../services/tmdb';
 
 // Helper
@@ -25,7 +25,6 @@ const getTimeAgo = (dateStr) => {
 const Header = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const { darkTheme } = useContext(UserContext);
   const { username, userAvatar } = useContext(AuthContext);
   const { openModal } = useContext(FilterContext);
   const { notifications, markNotificationsRead, unreadCount, removeNotification } = useContext(WatchlistContext);

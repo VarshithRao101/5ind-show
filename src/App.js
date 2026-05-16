@@ -22,11 +22,11 @@ import { AppRoutes } from './AppRoutes';
 import FilterModal from './components/FilterModal';
 import ChatBot from './components/ChatBot/ChatBot';
 import OfflineBanner from './components/OfflineBanner';
-import LoadingScreen from './components/LoadingScreen';
+// import LoadingScreen from './components/LoadingScreen';
 import CinematicErrorBoundary from './components/CinematicErrorBoundary';
 
 const AppContent = () => {
-  const { isAuthenticated, loading } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
 
   const { darkTheme } = useContext(UserContext);
   const location = useLocation();

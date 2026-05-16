@@ -81,7 +81,6 @@ export default function SearchPage() {
 
     // Correct Tab Label logic (Hide if 0? or just show 0?) 
     // "If a category has no results, hide it." -> I will hide the tab if count is 0, UNLESS all are 0.
-    const hasResults = results.length > 0;
     const showMovieTab = categorized.movie.length > 0;
     const showTvTab = categorized.tv.length > 0;
     const showPersonTab = categorized.person.length > 0;

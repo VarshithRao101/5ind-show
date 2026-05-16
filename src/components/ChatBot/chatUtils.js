@@ -133,7 +133,6 @@ const handleSimilarQuery = async (query, type) => {
 
 const discoverByKeywords = async (type, concepts, genreIds, language) => {
     try {
-        const keywordIds = [];
         const searchPromises = concepts.slice(0, 2).map(c =>
             tmdb.get('/search/keyword', { params: { query: c } })
                 .then(res => res.data.results?.[0]?.id)

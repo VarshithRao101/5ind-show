@@ -7,8 +7,7 @@ import {
     getSeasonDetails,
     getWatchProviders,
     getSimilarSeries,
-    getSeriesCredits,
-    POSTER_BASE
+    getSeriesCredits
 } from '../services/tmdb';
 import MovieCard from '../components/MovieCard';
 // import { isMobileDevice } from '../utils/isMobile';
