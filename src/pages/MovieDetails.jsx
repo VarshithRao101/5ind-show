@@ -14,7 +14,7 @@ import { getRottenTomatoesScore } from "../services/omdb";
 import MovieSlider from "../components/MovieSlider";
 import TrailerModal from "../components/TrailerModal";
 import SmartImage from "../components/SmartImage";
-import { FiPlay, FiPlus, FiCheck, FiZap, FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft, FiPlay, FiPlus, FiCheck } from "react-icons/fi";
 import { WatchlistContext } from "../context/WatchlistContext";
 import SkeletonDetails from '../components/skeletons/SkeletonDetails';
 
