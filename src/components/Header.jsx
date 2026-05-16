@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FiSearch, FiFilter, FiUser, FiZap, FiX, FiBell, FiHeart, FiTv, FiAlertCircle, FiCheckSquare } from 'react-icons/fi';
 import { motion, AnimatePresence } from 'framer-motion';
 // import { UserContext } from '../context/UserContext';
