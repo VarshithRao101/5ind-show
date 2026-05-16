@@ -149,7 +149,7 @@ const Login = () => {
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ delay: 0.2 }}
-          className="rounded-2xl border backdrop-blur-md transition-all duration-300 bg-[#1f1f1f]/80 border-white/10 p-8 shadow-card hover:shadow-yellow-glow/10 hover:border-white/20"
+          className="rounded-2xl border backdrop-blur-md transition-all duration-300 bg-[#1f1f1f]/80 border-white/10 p-6 sm:p-8 shadow-card hover:shadow-yellow-glow/10 hover:border-white/20"
         >
           {isGuest && (
             <motion.div

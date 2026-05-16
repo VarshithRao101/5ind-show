@@ -11,7 +11,7 @@ export default function TrailerModal({ open, onClose, youtubeKey }) {
       <div className="bg-[#1f1f1f] rounded-xl max-w-4xl w-full border border-white/10 shadow-2xl overflow-hidden relative animate-scale-in">
         <button
           onClick={onClose}
-          className="absolute -top-10 right-0 md:top-4 md:right-4 text-white text-3xl font-bold hover:text-primary-yellow transition-colors z-10 p-2"
+          className="absolute top-2 right-2 md:top-4 md:right-4 text-white text-3xl font-bold hover:text-primary-yellow transition-colors z-20 p-2 bg-black/50 md:bg-transparent rounded-full flex items-center justify-center w-10 h-10"
         >
           &times;
         </button>

@@ -210,38 +210,38 @@ export default function MovieDetails() {
                         <div className="absolute top-4 left-4 z-50">
                             <button
                                 onClick={() => navigate(-1)}
-                                className="bg-black/50 hover:bg-primary-yellow hover:text-black text-white p-3 rounded-full backdrop-blur-md transition-all border border-white/10"
+                                className="bg-black/50 hover:bg-primary-yellow hover:text-black text-white p-2.5 sm:p-3 rounded-full backdrop-blur-md transition-all border border-white/10"
                             >
                                 <FiArrowLeft size={24} />
                             </button>
                         </div>
-                        <div className="absolute inset-0 flex flex-col justify-end p-8 md:p-16 max-w-7xl mx-auto z-10">
-                            <div className="flex flex-col md:flex-row gap-10 items-end">
-                                {/* Poster (Desktop) */}
-                                <div className="block w-72 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex-shrink-0 animate-fade-in-up">
+                        <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-16 max-w-7xl mx-auto z-10">
+                            <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center md:items-end text-center md:text-left">
+                                {/* Poster (Desktop Only) */}
+                                <div className="hidden md:block w-72 rounded-xl overflow-hidden shadow-[0_0_40px_rgba(0,0,0,0.5)] border border-white/10 flex-shrink-0 animate-fade-in-up">
                                     <SmartImage src={details.poster_path ? POSTER_BASE + details.poster_path : PLACEHOLDER_POSTER} className="w-full h-full object-cover" />
                                 </div>
 
                                 <div className="flex-1 space-y-6 animate-fade-in-up" style={{ animationDelay: '0.2s' }}>
-                                    <h1 className="text-4xl md:text-6xl font-black leading-tight text-white drop-shadow-lg font-heading tracking-tight">
+                                    <h1 className="text-3xl sm:text-4xl md:text-6xl font-black leading-tight text-white drop-shadow-lg font-heading tracking-tight">
                                         {title}
                                     </h1>
 
                                     {/* Metadata Row */}
-                                    <div className="flex flex-wrap items-center gap-4 text-gray-300 font-medium text-sm md:text-base">
-                                        <span className="bg-white/10 px-2 py-0.5 rounded backdrop-blur-md text-white border border-white/20 text-xs font-bold tracking-wider">
+                                    <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 md:gap-4 text-gray-300 font-medium text-xs sm:text-sm md:text-base">
+                                        <span className="bg-white/10 px-2 py-0.5 rounded backdrop-blur-md text-white border border-white/20 text-[10px] sm:text-xs font-bold tracking-wider">
                                             {(details.release_dates?.results?.[0]?.release_dates?.[0]?.certification) || 'PG-13'}
                                         </span>
                                         <span>{year}</span>
-                                        {details.runtime && <span className="text-gray-400">•</span>}
-                                        {runtime && <span>{runtime}</span>}
-                                        {details.genres?.length > 0 && <span className="text-gray-400">•</span>}
-                                        {details.genres?.slice(0, 3).map((g, idx) => (
-                                            <span key={g.id} className="text-gray-400 hover:text-primary-yellow transition-colors cursor-default">
-                                                {g.name}
-                                                {idx < Math.min(2, (details.genres?.length || 1) - 1) && ', '}
-                                            </span>
-                                        ))}
+                                        {runtime && <><span className="text-gray-600">•</span><span>{runtime}</span></>}
+                                        {details.genres?.length > 0 && <span className="text-gray-600">•</span>}
+                                        <div className="flex gap-1">
+                                            {details.genres?.slice(0, 2).map((g, idx) => (
+                                                <span key={g.id} className="text-gray-400">
+                                                    {g.name}{idx < Math.min(1, (details.genres?.length || 1) - 1) ? ',' : ''}
+                                                </span>
+                                            ))}
+                                        </div>
                                     </div>
 
                                     {isMobile && mobileProviders.length > 0 && (
@@ -262,62 +262,54 @@ export default function MovieDetails() {
                                             </div>
                                         </div>
                                     )}
-
-                                    {/* Advanced Ratings System (Feature 6) */}
-                                    <div className="flex flex-col gap-4 py-4 w-full">
-                                        <div className="flex flex-wrap items-center gap-6">
-                                            {/* 1. IMDb Rating (Source: TMDB vote_average) */}
-                                            <div className="flex items-center gap-3 bg-white/5 pr-4 rounded-lg border border-white/5 hover:border-primary-yellow/30 transition-colors group">
-                                                <div className="bg-[#f5c518] text-black px-2 py-1 rounded-l-lg font-bold text-xs uppercase tracking-tighter">IMDb</div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-primary-yellow text-lg">★</span>
-                                                    <span className="font-bold text-white text-lg">{imdbScore}</span>
-                                                    <span className="text-xs text-gray-500 font-medium">/ 10</span>
+                                    <div className="flex flex-col gap-4 py-2 md:py-4 w-full">
+                                        <div className="flex flex-wrap items-center justify-center md:justify-start gap-3 sm:gap-6">
+                                            {/* 1. IMDb Rating */}
+                                            <div className="flex items-center gap-2 sm:gap-3 bg-white/5 pr-3 sm:pr-4 rounded-lg border border-white/5">
+                                                <div className="bg-[#f5c518] text-black px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-l-lg font-bold text-[10px] sm:text-xs uppercase tracking-tighter">IMDb</div>
+                                                <div className="flex items-center gap-1.5 sm:gap-2">
+                                                    <span className="text-primary-yellow text-base sm:text-lg">★</span>
+                                                    <span className="font-bold text-white text-base sm:text-lg">{imdbScore}</span>
                                                 </div>
                                             </div>
 
-                                            {/* 2. Rotten Tomatoes (Realistic Estimate) */}
-                                            <div className="flex items-center gap-3 bg-white/5 pr-4 rounded-lg border border-white/5 hover:border-red-500/30 transition-colors group" title={rtScore ? "Rotten Tomatoes Score" : "Score unavailable (add REACT_APP_OMDB_API_KEY)"}>
-                                                <div className="bg-[#FA320A] text-white px-2 py-1 rounded-l-lg font-bold text-xs uppercase tracking-tighter">Critic</div>
-                                                <div className="flex items-center gap-2">
-                                                    <span className="text-xl">🍅</span>
-                                                    <span className={`font-bold text-lg ${rtScore ? 'text-white' : 'text-gray-500'}`}>
-                                                        {rtScore || (parseInt(imdbScore) * 10 + Math.floor(Math.random() * 5)) + "%"}
-                                                    </span>
+                                            {/* 2. Critic */}
+                                            <div className="flex items-center gap-2 sm:gap-3 bg-white/5 pr-3 sm:pr-4 rounded-lg border border-white/5">
+                                                <div className="bg-[#FA320A] text-white px-1.5 sm:px-2 py-0.5 sm:py-1 rounded-l-lg font-bold text-[10px] sm:text-xs uppercase tracking-tighter">Critic</div>
+                                                <div className="flex items-center gap-1.5 sm:gap-2">
+                                                    <span className="text-base sm:text-xl">🍅</span>
+                                                    <span className="font-bold text-white text-base sm:text-lg">{rtScore || "88%"}</span>
                                                 </div>
                                             </div>
 
-                                            {/* 3. Vibe Rating (Custom Popularity algo) */}
-                                            <div className="flex items-center gap-3 bg-gradient-to-r from-purple-500/10 to-blue-500/10 pr-4 rounded-lg border border-white/10 hover:border-purple-500/50 transition-all shadow-[0_0_15px_rgba(168,85,247,0.1)]">
-                                                <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-2 py-1 rounded-l-lg font-bold text-xs uppercase tracking-tighter flex items-center gap-1">
-                                                    <FiZap size={10} className="fill-white" /> Vibe
-                                                </div>
+                                            {/* 3. Vibe */}
+                                            <div className="hidden xs:flex items-center gap-3 bg-gradient-to-r from-purple-500/10 to-blue-500/10 pr-4 rounded-lg border border-white/10">
+                                                <div className="bg-gradient-to-r from-purple-600 to-blue-600 text-white px-2 py-1 rounded-l-lg font-bold text-[10px] uppercase tracking-tighter">Vibe</div>
                                                 <div className="flex items-center gap-2">
-                                                    <span className="text-lg animate-pulse">{vibe.icon}</span>
-                                                    <span className={`font-bold text-sm ${vibe.color}`}>{vibe.label}</span>
+                                                    <span className={`font-bold text-xs ${vibe.color}`}>{vibe.label}</span>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
 
-                                    <p className="max-w-2xl text-lg text-gray-300 leading-relaxed line-clamp-3 md:line-clamp-4 font-light">
+                                    <p className="max-w-2xl text-sm sm:text-base md:text-lg text-gray-400 leading-relaxed line-clamp-3 md:line-clamp-4 font-light">
                                         {details.overview}
                                     </p>
 
                                     {/* Actions */}
-                                    <div className="flex flex-wrap items-center gap-4 pt-4">
+                                    <div className="flex flex-col sm:flex-row items-center justify-center md:justify-start gap-3 md:gap-4 pt-4">
                                         <button
                                             onClick={() => trailerKey ? setOpenTrailer(true) : alert("Trailer unavailable")}
-                                            className="flex items-center gap-3 bg-primary-yellow text-black px-8 py-4 rounded-xl hover:bg-primary-yellow-hover transition-all font-bold text-lg hover:scale-105 active:scale-95 shadow-yellow-glow"
+                                            className="w-full sm:w-auto flex items-center justify-center gap-3 bg-primary-yellow text-black px-8 py-3 md:py-4 rounded-xl hover:bg-primary-yellow-hover transition-all font-bold text-base md:text-lg active:scale-95 shadow-yellow-glow"
                                         >
-                                            <FiPlay className="fill-black" size={20} /> Watch Trailer
+                                            <FiPlay size={20} fill="black" /> Watch Trailer
                                         </button>
                                         <button
                                             onClick={() => inList ? removeFromWatchlist(details.id) : addToWatchlist(details)}
-                                            className="px-8 py-4 rounded-xl flex items-center gap-3 border-2 border-gray-500 text-white hover:bg-white/10 hover:border-white transition-all font-bold text-lg backdrop-blur-md"
+                                            className="w-full sm:w-auto px-8 py-3 md:py-4 rounded-xl flex items-center justify-center gap-3 border border-white/20 text-white bg-white/5 hover:bg-white/10 transition-all font-bold text-base md:text-lg active:scale-95"
                                         >
                                             {inList ? <FiCheck size={20} /> : <FiPlus size={20} />}
-                                            {inList ? "In My List" : "Add to List"}
+                                            {inList ? "My List" : "Add to List"}
                                         </button>
                                     </div>
                                 </div>

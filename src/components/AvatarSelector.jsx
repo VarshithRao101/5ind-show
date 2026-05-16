@@ -23,7 +23,7 @@ const AVATARS = [
 
 const AvatarSelector = ({ selectedAvatar, onSelect }) => {
     return (
-        <div className="grid grid-cols-4 gap-3 sm:gap-4 mb-6">
+        <div className="grid grid-cols-3 xs:grid-cols-4 gap-3 sm:gap-4 mb-6">
             {AVATARS.map((avatar, index) => {
                 const isSelected = selectedAvatar === avatar;
 

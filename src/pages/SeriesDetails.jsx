@@ -158,7 +158,7 @@ const SeriesDetails = () => {
             {/* Back Button */}
             <button
                 onClick={() => navigate(-1)}
-                className="fixed top-4 left-4 z-50 p-3 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-black/80 transition-all border border-white/10"
+                className="fixed top-4 left-4 z-50 p-2.5 sm:p-3 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-black/80 transition-all border border-white/10"
             >
                 <FiArrowLeft size={24} />
             </button>
@@ -166,45 +166,44 @@ const SeriesDetails = () => {
             {/* ==================================================================================
                SECTION 1: HERO (MATCH MOVIE PAGE)
                ================================================================================== */}
-            <div className="relative w-full aspect-[16/9] md:aspect-[3/1] max-h-[500px]">
+            <div className="relative w-full aspect-[16/9] md:aspect-[3/1] min-h-[300px] md:max-h-[500px]">
                 {backdrop ? (
                     <img
                         src={backdrop}
                         alt="Backdrop"
-                        className="w-full h-full object-cover opacity-40 mask-image-gradient"
+                        className="w-full h-full object-cover opacity-60 md:opacity-40 mask-image-gradient"
                     />
                 ) : (
                     <div className="w-full h-full bg-[#1a1a1a]" />
                 )}
-                {/* Gradient Overlay */}
-                <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/50 to-transparent" />
-                <div className="absolute inset-0 bg-gradient-to-r from-[#0f0f0f] via-[#0f0f0f]/30 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#0f0f0f] via-[#0f0f0f]/60 to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-r from-[#0f0f0f] via-[#0f0f0f]/40 to-transparent" />
 
-                <div className="absolute bottom-0 left-0 right-0 p-4 md:p-12 flex items-end gap-8 max-w-7xl mx-auto z-10">
-                    {/* Poster */}
-                    <img
-                        src={details.poster_path ? `https://image.tmdb.org/t/p/w500${details.poster_path}` : "/placeholder-poster.png"}
-                        alt={details.name}
-                        className="hidden md:block w-[200px] rounded-xl shadow-2xl border border-white/10"
-                    />
+                <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-12 max-w-7xl mx-auto z-10">
+                    <div className="flex flex-col md:flex-row items-center md:items-end gap-6 md:gap-8 text-center md:text-left">
+                        <img
+                            src={details.poster_path ? `https://image.tmdb.org/t/p/w500${details.poster_path}` : "/placeholder-poster.png"}
+                            alt={details.name}
+                            className="hidden md:block w-[200px] rounded-xl shadow-2xl border border-white/10"
+                        />
 
-                    <div className="flex-1 mb-2">
-                        <h1 className="text-3xl md:text-6xl font-black mb-4 leading-tight drop-shadow-lg">{details.name}</h1>
-
-                        {/* Rating & Simple Metadata */}
-                        <div className="flex flex-wrap items-center gap-x-6 gap-y-2 text-sm md:text-base text-gray-200 font-medium mb-4">
-                            <span className="flex items-center gap-1 text-primary-yellow font-bold">
-                                <FiStar fill="currentColor" /> {details.vote_average?.toFixed(1)} <span className="text-gray-400 font-normal">({details.vote_count})</span>
-                            </span>
-                            <span>{details.first_air_date?.substring(0, 4)}</span>
-                            <span>{details.number_of_seasons} Seasons</span>
-                            <span className="px-2 py-0.5 border border-white/20 rounded text-xs uppercase">{details.status}</span>
+                        <div className="flex-1 mb-2">
+                            <h1 className="text-3xl sm:text-4xl md:text-6xl font-black mb-3 md:mb-4 leading-tight drop-shadow-lg">{details.name}</h1>
+                            <div className="flex flex-wrap items-center justify-center md:justify-start gap-x-4 gap-y-2 text-xs sm:text-sm md:text-base text-gray-200 font-medium mb-4">
+                                <span className="flex items-center gap-1 text-primary-yellow font-bold">
+                                    <FiStar fill="currentColor" /> {details.vote_average?.toFixed(1)}
+                                </span>
+                                <span className="text-gray-500">•</span>
+                                <span>{details.first_air_date?.substring(0, 4)}</span>
+                                <span className="text-gray-500">•</span>
+                                <span>{details.number_of_seasons} Seasons</span>
+                                <span className="text-gray-500">•</span>
+                                <span className="px-1.5 py-0.5 border border-white/20 rounded text-[10px] uppercase">{details.status}</span>
+                            </div>
+                            <p className="text-gray-300 leading-relaxed max-w-3xl line-clamp-3 mb-4 md:mb-6 text-sm md:text-base">
+                                {details.overview}
+                            </p>
                         </div>
-
-                        {/* Overview (Short) */}
-                        <p className="hidden md:block text-gray-300 leading-relaxed max-w-3xl line-clamp-3 mb-6">
-                            {details.overview}
-                        </p>
                     </div>
                 </div>
             </div>

@@ -99,13 +99,19 @@ export default function SearchPage() {
         <div className="min-h-screen pb-24 bg-[#0f0f0f] text-white pt-20 md:pt-24 px-4 md:px-8">
             <div className="max-w-7xl mx-auto space-y-8">
                 {/* Search Input Area */}
-                <div className="max-w-3xl mx-auto">
-                    <SearchBar initialQuery={q} realTime={true} />
+                <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-12">
+                    <div>
+                        <h1 className="text-xl sm:text-3xl font-black mb-2 text-white">Search Results</h1>
+                        <p className="text-gray-400 font-medium">Found {results.length} titles for "{q}"</p>
+                    </div>
+                    <div className="w-full max-w-sm">
+                        <SearchBar initialQuery={q} realTime={true} />
+                    </div>
                 </div>
 
                 {/* Loading State */}
                 {loading && (
-                    <div className="grid grid-cols-2 busm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 animate-pulse">
+                    <div className="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6 animate-pulse">
                         {[...Array(10)].map((_, i) => (
                             <SkeletonCard key={i} />
                         ))}
@@ -167,7 +173,7 @@ export default function SearchPage() {
                         </div>
 
                         {/* Grid */}
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 md:gap-6 animate-fade-in-up">
+                        <div className="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 md:gap-6 animate-fade-in-up">
                             {displayData.map((item) => {
                                 if (!item.id) return null;
                                 const inList = [...savedForLater, ...currentlyWatching].some(i => i.id === item.id);

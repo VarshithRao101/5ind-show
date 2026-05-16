@@ -235,20 +235,25 @@ const Profile = () => {
       {/* Edit Profile Modal */}
       <AnimatePresence>
         {showEditModal && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm overflow-y-auto"
-            onClick={() => setShowEditModal(false)}
-          >
+          <>
+            {/* Backdrop */}
             <motion.div
-              initial={{ scale: 0.9, opacity: 0, y: 50 }}
-              animate={{ scale: 1, opacity: 1, y: 0 }}
-              exit={{ scale: 0.9, opacity: 0, y: 50 }}
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-lg card-elevated p-6 shadow-yellow-glow-lg my-8"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black/80 backdrop-blur-sm z-50"
+              onClick={() => setShowEditModal(false)}
+            />
+
+            {/* Drawer/Modal */}
+            <motion.div
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ type: "spring", damping: 25, stiffness: 200 }}
+              className="fixed inset-x-0 bottom-0 sm:inset-0 m-auto w-full sm:max-w-lg h-[85vh] sm:h-auto bg-[#121212] border-t sm:border border-white/10 rounded-t-[2.5rem] sm:rounded-3xl shadow-2xl z-[60] overflow-hidden flex flex-col"
             >
+              <div className="flex-1 overflow-y-auto p-6 custom-scrollbar">
               {/* Header */}
               <div className="flex items-center justify-between mb-6">
                 <h2 className="text-2xl font-heading font-bold text-white">Edit Profile</h2>
@@ -315,8 +320,9 @@ const Profile = () => {
                   )}
                 </motion.button>
               </div>
-            </motion.div>
+            </div>
           </motion.div>
+        </>
         )}
       </AnimatePresence>
     </div>

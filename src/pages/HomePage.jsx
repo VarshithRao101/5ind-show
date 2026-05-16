@@ -1,6 +1,4 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { isMobileDevice } from "../utils/isMobile";
-import MobileMovieGrid from "../components/MobileMovieGrid";
 import { useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { FiPlay, FiInfo, FiPlus, FiCheck, FiX } from 'react-icons/fi';
@@ -55,15 +53,15 @@ const HeroSlide = ({ movie }) => {
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="max-w-3xl space-y-6"
+                        className="max-w-3xl space-y-4 md:space-y-6"
                     >
                         {/* Title */}
-                        <h1 className="text-4xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl font-heading">
+                        <h1 className="text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl font-heading">
                             {movie.title || movie.name}
                         </h1>
 
                         {/* Metadata Row */}
-                        <div className="flex items-center gap-4 text-sm md:text-base font-semibold text-gray-300">
+                        <div className="flex items-center gap-3 md:gap-4 text-xs sm:text-sm md:text-base font-semibold text-gray-300">
                             <span className="text-[#FFD400] tracking-wider uppercase">Top Pick</span>
                             <span>•</span>
                             <span>{movie.release_date ? new Date(movie.release_date).getFullYear() : 'N/A'}</span>
@@ -74,41 +72,40 @@ const HeroSlide = ({ movie }) => {
                         </div>
 
                         {/* Overview */}
-                        <p className="text-gray-200 text-base md:text-xl line-clamp-3 leading-relaxed max-w-2xl font-medium drop-shadow-md">
+                        <p className="text-gray-200 text-sm sm:text-base md:text-xl line-clamp-2 sm:line-clamp-3 leading-relaxed max-w-2xl font-medium drop-shadow-md">
                             {movie.overview}
                         </p>
 
                         {/* Buttons */}
-                        <div className="flex flex-wrap items-center gap-4 pt-6">
+                        <div className="flex flex-wrap items-center gap-3 md:gap-4 pt-4 md:pt-6">
                             <button
                                 onClick={() => navigate(movie.media_type === 'tv' ? `/tv/${movie.id}` : `/movie/${movie.id}`)}
-                                className="flex items-center gap-3 bg-[#FFD400] text-black px-8 py-3.5 rounded-xl hover:bg-[#e3b616] transition-all font-bold text-lg hover:scale-105 active:scale-95 shadow-lg shadow-yellow-500/20"
+                                className="flex items-center gap-2 md:gap-3 bg-[#FFD400] text-black px-5 md:px-8 py-2.5 md:py-3.5 rounded-xl hover:bg-[#e3b616] transition-all font-bold text-sm md:text-lg active:scale-95 shadow-lg shadow-yellow-500/20"
                             >
-                                <FiPlay size={22} fill="black" />
+                                <FiPlay size={18} fill="black" />
                                 Play
                             </button>
 
                             <button
                                 onClick={() => navigate(movie.media_type === 'tv' ? `/tv/${movie.id}` : `/movie/${movie.id}`)}
-                                className="flex items-center gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-3.5 rounded-xl hover:bg-white/20 transition-all font-bold text-lg hover:scale-105 active:scale-95"
+                                className="flex items-center gap-2 md:gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 md:px-8 py-2.5 md:py-3.5 rounded-xl hover:bg-white/20 transition-all font-bold text-sm md:text-lg active:scale-95"
                             >
-                                <FiInfo size={22} />
-                                More Info
+                                <FiInfo size={18} />
+                                Info
                             </button>
 
-                            {(movie.media_type !== 'tv') && (
-                                <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        if (inList) removeFromWatchlist(movie.id);
-                                        else addToWatchlist(movie);
-                                    }}
-                                    className="p-3.5 rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
-                                    title={inList ? "Remove from List" : "Add to List"}
-                                >
-                                    {inList ? <FiCheck size={22} /> : <FiPlus size={22} />}
-                                </button>
-                            )}
+                            {/* Watchlist button - only if not TV or handle correctly */}
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    if (inList) removeFromWatchlist(movie.id);
+                                    else addToWatchlist(movie);
+                                }}
+                                className="p-2.5 md:p-3.5 rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
+                                title={inList ? "Remove from List" : "Add to List"}
+                            >
+                                {inList ? <FiCheck size={20} /> : <FiPlus size={20} />}
+                            </button>
                         </div>
                     </motion.div>
                 </div>
@@ -118,7 +115,6 @@ const HeroSlide = ({ movie }) => {
 };
 
 export default function HomePage() {
-    const isMobile = isMobileDevice();
     const navigate = useNavigate();
     const {
         addToWatchlist,
@@ -317,134 +313,118 @@ export default function HomePage() {
     const isFiltered = filteredMovies.length > 0;
 
     return (
-        <>
-            {isMobile ? (
-                <div className="min-h-screen pt-16 bg-[#0f0f0f]">
-                    {loading && <div className="text-center mt-10 text-gray-400">Loading movies…</div>}
-                    {!loading && <MobileMovieGrid movies={isFiltered ? filteredMovies : trending} />}
-                    {!loading && (isFiltered ? filteredMovies : trending).length === 0 && (
-                        <div className="text-center text-gray-400 mt-8">
-                            Nothing to show right now
+            <div className={`min-h-screen pb-24 ${darkTheme ? 'bg-[#0f0f0f]' : 'bg-gray-100'} overflow-x-hidden relative`}>
+                {/* Ambient Background */}
+                <div className="fixed inset-0 pointer-events-none z-0">
+                    <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#FFD400]/5 blur-[150px] rounded-full mix-blend-screen" />
+                </div>
+
+                <AnimatePresence>
+                    {/* Hero Section */}
+                    {loading && !heroMovie && !isFiltered && <SkeletonHero />}
+
+                    {!isFiltered && heroMovie && (
+                        <HeroSlide movie={heroMovie} />
+                    )}
+
+                    {!loading && !heroMovie && !isFiltered && (
+                        <div className="h-[50vh] flex items-center justify-center text-gray-500">
+                            <EmptyState message="No featured movie available. Check your internet." canRetry={true} />
+                        </div>
+                    )}
+                </AnimatePresence>
+
+                <div className={`relative z-10 pb-12 bg-[#0f0f0f] min-h-[500px] ${isFiltered ? 'pt-24' : ''}`}>
+
+                    {/* FILTERED VIEW */}
+                    {isFiltered ? (
+                        <div className="max-w-7xl mx-auto px-4 md:px-12 pt-8 animate-fade-in-up">
+                            <div className="flex items-center justify-between mb-8">
+                                <h2 className="text-2xl md:text-3xl font-heading font-bold text-white flex items-center gap-3">
+                                    <span className="w-1.5 h-8 bg-[#FFD400] rounded-full"></span>
+                                    Results <span className="text-gray-500 text-lg">({filteredMovies.length})</span>
+                                </h2>
+                                <button
+                                    onClick={() => setFilteredMovies([])}
+                                    className="px-4 py-2 bg-white/5 border border-white/10 text-white rounded-lg hover:bg-white/20 transition-all flex items-center gap-2 text-sm"
+                                >
+                                    <FiX /> Clear
+                                </button>
+                            </div>
+                            <div className="grid grid-cols-2 xs:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 sm:gap-6">
+                                {filteredMovies.map(movie => {
+                                    const inList = checkIfInWatchlist(movie.id);
+                                    return (
+                                        <MovieCard
+                                            key={movie.id}
+                                            id={movie.id}
+                                            title={movie.title || movie.name}
+                                            posterPath={movie.poster_path}
+                                            rating={movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
+                                            genre={getGenreName(movie.genre_ids?.[0]) || "Movie"}
+                                            year={(movie.release_date || movie.first_air_date || "").substring(0, 4)}
+                                            isInWatchlist={inList}
+                                            onToggleWatchlist={() => {
+                                                if (inList) removeFromWatchlist(movie.id);
+                                                else addToWatchlist(movie);
+                                            }}
+                                            onNavigate={() => navigate(movie.media_type === 'tv' ? `/tv/${movie.id}` : `/movie/${movie.id}`)}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        </div>
+                    ) : (
+                        /* STANDARD ROWS VIEW */
+                        <div className="space-y-8 md:space-y-16 pt-8 md:pt-12">
+                            {/* 1. Top 10 India (Ranked) */}
+                            <div className="relative z-20">
+                                {loading && !indiaTop.length && <SkeletonRow />}
+                                {!loading && indiaTop.length === 0 && (
+                                    <div className="pl-4 md:pl-12">
+                                        <h3 className="text-xl font-bold text-white mb-4">Top 10 in India Today</h3>
+                                        <EmptyState message="No movies available right now" />
+                                    </div>
+                                )}
+                                {indiaTop.length > 0 && (
+                                    <MovieSlider
+                                        title="Top 10 in India Today"
+                                        movies={indiaTop}
+                                        ranked={true}
+                                    />
+                                )}
+                            </div>
+
+                            {/* 2. Trending */}
+                            <div>
+                                {loading && !trending.length && <SkeletonRow />}
+                                {!loading && trending.length === 0 && (
+                                    <div className="pl-4 md:pl-12">
+                                        <h3 className="text-xl font-bold text-white mb-4">Trending Now</h3>
+                                        <EmptyState message="No trending movies right now" />
+                                    </div>
+                                )}
+                                {trending.length > 0 && <MovieSlider title="Trending Now" movies={trending} />}
+                            </div>
+
+                            {/* 3. Critically Acclaimed (Deferred) */}
+                            <div className={`transition-opacity duration-1000 ${topRated.length > 0 || loading ? 'opacity-100' : 'opacity-0 h-0'}`}>
+                                {loading && !topRated.length && <SkeletonRow />}
+                                {topRated.length > 0 && (
+                                    <MovieSlider title="Critically Acclaimed" movies={topRated} />
+                                )}
+                            </div>
+
+                            {/* 4. Recommended For You (Deferred) */}
+                            <div className={`transition-opacity duration-1000 ${nowPlaying.length > 0 || loading ? 'opacity-100' : 'opacity-0 h-0'}`}>
+                                {loading && !nowPlaying.length && <SkeletonRow />}
+                                {nowPlaying.length > 0 && (
+                                    <MovieSlider title="Recommended For You" movies={nowPlaying} />
+                                )}
+                            </div>
                         </div>
                     )}
                 </div>
-            ) : (
-                <div className={`min-h-screen pb-24 ${darkTheme ? 'bg-[#0f0f0f]' : 'bg-gray-100'} overflow-x-hidden relative`}>
-                    {/* Ambient Background */}
-                    <div className="fixed inset-0 pointer-events-none z-0">
-                        <div className="absolute top-[-20%] right-[-10%] w-[60%] h-[60%] bg-[#FFD400]/5 blur-[150px] rounded-full mix-blend-screen" />
-                    </div>
-
-                    <AnimatePresence>
-                        {/* Hero Section */}
-                        {loading && !heroMovie && !isFiltered && <SkeletonHero />}
-
-                        {!isFiltered && heroMovie && (
-                            <HeroSlide movie={heroMovie} />
-                        )}
-
-                        {!loading && !heroMovie && !isFiltered && (
-                            <div className="h-[50vh] flex items-center justify-center text-gray-500">
-                                <EmptyState message="No featured movie available. Check your internet." canRetry={true} />
-                            </div>
-                        )}
-                    </AnimatePresence>
-
-                    <div className={`relative z-10 pb-12 bg-[#0f0f0f] min-h-[500px] ${isFiltered ? 'pt-24' : ''}`}>
-
-                        {/* FILTERED VIEW */}
-                        {isFiltered ? (
-                            <div className="max-w-7xl mx-auto px-6 md:px-12 pt-8 animate-fade-in-up">
-                                <div className="flex items-center justify-between mb-8">
-                                    <h2 className="text-3xl font-heading font-bold text-white flex items-center gap-3">
-                                        <span className="w-1.5 h-8 bg-[#FFD400] rounded-full"></span>
-                                        Filtered Results <span className="text-gray-500 text-lg">({filteredMovies.length})</span>
-                                    </h2>
-                                    <button
-                                        onClick={() => setFilteredMovies([])}
-                                        className="px-4 py-2 bg-white/10 text-white rounded-lg hover:bg-white/20 transition-all flex items-center gap-2"
-                                    >
-                                        <FiX /> Clear Filters
-                                    </button>
-                                </div>
-                                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-6">
-                                    {filteredMovies.map(movie => {
-                                        const inList = checkIfInWatchlist(movie.id);
-                                        return (
-                                            <MovieCard
-                                                key={movie.id}
-                                                id={movie.id}
-                                                title={movie.title || movie.name}
-                                                posterPath={movie.poster_path}
-                                                rating={movie.vote_average ? movie.vote_average.toFixed(1) : "N/A"}
-                                                genre={getGenreName(movie.genre_ids?.[0]) || "Movie"}
-                                                year={(movie.release_date || movie.first_air_date || "").substring(0, 4)}
-                                                isInWatchlist={inList}
-                                                onToggleWatchlist={() => {
-                                                    if (inList) removeFromWatchlist(movie.id);
-                                                    else addToWatchlist(movie);
-                                                }}
-                                                onNavigate={() => navigate(movie.media_type === 'tv' ? `/tv/${movie.id}` : `/movie/${movie.id}`)}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            </div>
-                        ) : (
-                            /* STANDARD ROWS VIEW */
-                            <div className="space-y-16 pt-12">
-                                {/* 1. Top 10 India (Ranked) */}
-                                <div className="relative z-20">
-                                    {loading && !indiaTop.length && <SkeletonRow />}
-                                    {!loading && indiaTop.length === 0 && (
-                                        <div className="pl-6 md:pl-12">
-                                            <h3 className="text-xl font-bold text-white mb-4">Top 10 in India Today</h3>
-                                            <EmptyState message="No movies available right now" />
-                                        </div>
-                                    )}
-                                    {indiaTop.length > 0 && (
-                                        <MovieSlider
-                                            title="Top 10 in India Today"
-                                            movies={indiaTop}
-                                            ranked={true}
-                                        />
-                                    )}
-                                </div>
-
-                                {/* 2. Trending */}
-                                <div>
-                                    {loading && !trending.length && <SkeletonRow />}
-                                    {!loading && trending.length === 0 && (
-                                        <div className="pl-6 md:pl-12">
-                                            <h3 className="text-xl font-bold text-white mb-4">Trending Now</h3>
-                                            <EmptyState message="No trending movies right now" />
-                                        </div>
-                                    )}
-                                    {trending.length > 0 && <MovieSlider title="Trending Now" movies={trending} />}
-                                </div>
-
-                                {/* 3. Critically Acclaimed (Deferred) */}
-                                <div className={`transition-opacity duration-1000 ${topRated.length > 0 || loading ? 'opacity-100' : 'opacity-0 h-0'}`}>
-                                    {loading && !topRated.length && <SkeletonRow />}
-                                    {!loading && topRated.length === 0 && null}
-                                    {topRated.length > 0 && (
-                                        <MovieSlider title="Critically Acclaimed" movies={topRated} />
-                                    )}
-                                </div>
-
-                                {/* 4. Recommended For You (Deferred) */}
-                                <div className={`transition-opacity duration-1000 ${nowPlaying.length > 0 || loading ? 'opacity-100' : 'opacity-0 h-0'}`}>
-                                    {loading && !nowPlaying.length && <SkeletonRow />}
-                                    {nowPlaying.length > 0 && (
-                                        <MovieSlider title="Recommended For You" movies={nowPlaying} />
-                                    )}
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                </div >
-            )
-            }
-        </>
+            </div>
     );
 }

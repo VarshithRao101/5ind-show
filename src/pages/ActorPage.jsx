@@ -149,20 +149,19 @@ export default function ActorPage() {
                             <span className="w-1 h-6 bg-primary-yellow rounded-full"></span>
                             Movies
                         </h3>
-                        {/* Desktop: Horizontal | Mobile: Grid (Vertical Vertical) */}
-                        <div className="flex overflow-x-auto md:grid md:grid-cols-5 lg:grid-cols-6 gap-4 pb-4 md:pb-0 no-scrollbar snap-x snap-mandatory">
+                        {/* Desktop: Grid | Mobile: Grid (Responsive) */}
+                        <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-6">
                             {movieCredits.map(item => (
-                                <div key={`movie-${item.id}`} className="min-w-[140px] md:min-w-0 snap-start">
-                                    <MovieCard
-                                        id={item.id}
-                                        title={item.title}
-                                        posterPath={item.poster_path}
-                                        year={(item.release_date || "").substring(0, 4)}
-                                        rating={item.vote_average?.toFixed(1) || "N/A"}
-                                        genre="Movie"
-                                        onNavigate={() => navigate(`/movie/${item.id}`)}
-                                    />
-                                </div>
+                                <MovieCard
+                                    key={`movie-${item.id}`}
+                                    id={item.id}
+                                    title={item.title}
+                                    posterPath={item.poster_path}
+                                    year={(item.release_date || "").substring(0, 4)}
+                                    rating={item.vote_average?.toFixed(1) || "N/A"}
+                                    genre="Movie"
+                                    onNavigate={() => navigate(`/movie/${item.id}`)}
+                                />
                             ))}
                         </div>
                     </section>
@@ -175,19 +174,18 @@ export default function ActorPage() {
                             <span className="w-1 h-6 bg-gray-600 rounded-full"></span>
                             TV Series
                         </h3>
-                        <div className="flex overflow-x-auto md:grid md:grid-cols-5 lg:grid-cols-6 gap-4 pb-4 md:pb-0 no-scrollbar snap-x snap-mandatory">
+                        <div className="grid grid-cols-2 xs:grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 gap-3 sm:gap-6">
                             {tvCredits.map(item => (
-                                <div key={`tv-${item.id}`} className="min-w-[140px] md:min-w-0 snap-start">
-                                    <MovieCard
-                                        id={item.id}
-                                        title={item.name}
-                                        posterPath={item.poster_path}
-                                        year={(item.first_air_date || "").substring(0, 4)}
-                                        rating={item.vote_average?.toFixed(1) || "N/A"}
-                                        genre="TV"
-                                        onNavigate={() => navigate(`/series/${item.id}`)}
-                                    />
-                                </div>
+                                <MovieCard
+                                    key={`tv-${item.id}`}
+                                    id={item.id}
+                                    title={item.name}
+                                    posterPath={item.poster_path}
+                                    year={(item.first_air_date || "").substring(0, 4)}
+                                    rating={item.vote_average?.toFixed(1) || "N/A"}
+                                    genre="TV"
+                                    onNavigate={() => navigate(`/series/${item.id}`)}
+                                />
                             ))}
                         </div>
                     </section>

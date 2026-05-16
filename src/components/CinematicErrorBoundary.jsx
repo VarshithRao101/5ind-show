@@ -18,12 +18,12 @@ class CinematicErrorBoundary extends React.Component {
     render() {
         if (this.state.hasError) {
             return (
-                <div className="min-h-screen bg-[#000] text-white flex flex-col items-center justify-center p-8 text-center bg-[url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-bcae-07a3f8dc141a/f6d7434e-d6de-4185-a6d4-c77a2d08737b/US-en-20220502-popsignuptwoweeks-perspective_alpha_website_medium.jpg')] bg-cover bg-no-repeat bg-blend-overlay bg-black/80">
-                    <h1 className="text-6xl font-extrabold mb-4 text-red-600 drop-shadow-lg">Something Went Wrong.</h1>
-                    <p className="text-2xl text-gray-300 max-w-2xl mb-8">
+                <div className="min-h-screen bg-[#000] text-white flex flex-col items-center justify-center p-6 text-center bg-[url('https://assets.nflxext.com/ffe/siteui/vlv3/f841d4c7-10e1-40af-bcae-07a3f8dc141a/f6d7434e-d6de-4185-a6d4-c77a2d08737b/US-en-20220502-popsignuptwoweeks-perspective_alpha_website_medium.jpg')] bg-cover bg-no-repeat bg-blend-overlay bg-black/80">
+                    <h1 className="text-2xl sm:text-4xl md:text-6xl font-black mb-4 text-red-600 drop-shadow-lg leading-tight">Something Went Wrong.</h1>
+                    <p className="text-base sm:text-xl md:text-2xl text-gray-300 max-w-2xl mb-8 font-medium">
                         We encountered an unexpected error while loading this scene. Please try refreshing the page.
                     </p>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col sm:flex-row gap-4">
                         <button
                             onClick={() => window.location.reload()}
                             className="px-8 py-3 bg-red-600 rounded font-bold hover:bg-red-700 transition shadow-lg"

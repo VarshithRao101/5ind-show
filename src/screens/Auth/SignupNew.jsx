@@ -137,7 +137,7 @@ const Signup = () => {
             darkTheme
               ? 'bg-card-bg-dark/40 border-white/10 hover:border-primary-yellow/50'
               : 'bg-white/40 border-white/30 hover:border-primary-yellow/50'
-          } p-8 shadow-lg`}
+          } p-6 sm:p-8 shadow-lg`}
         >
           {emailSent ? (
             <motion.div

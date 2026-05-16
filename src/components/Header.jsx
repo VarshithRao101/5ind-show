@@ -102,26 +102,36 @@ const Header = () => {
           </span>
         </div>
 
-        {/* 2. Search Trigger (Fake Input) */}
+        {/* 2. Search Trigger (Fake Input) - Hidden on extra small mobile */}
         {location.pathname !== '/search' && (
-          <div className="flex-1 max-w-xl relative px-4">
+          <div className="flex-1 max-w-xl relative px-2 sm:px-4 hidden xs:block">
             <button
               onClick={() => navigate('/search')}
-              className="w-full flex items-center bg-[#1f1f1f] border border-white/10 rounded-full px-4 py-2.5 transition-all duration-300 hover:border-primary-yellow hover:shadow-[0_0_15px_rgba(255,212,0,0.15)] group text-left outline-none"
+              className="w-full flex items-center bg-white/5 border border-white/10 rounded-full px-4 py-2 transition-all duration-300 hover:border-primary-yellow group text-left outline-none"
             >
-              <FiSearch className="text-gray-400 group-hover:text-primary-yellow transition-colors mr-3" size={20} />
-              <span className="text-gray-500 font-medium">Search movies & TV...</span>
+              <FiSearch className="text-gray-400 group-hover:text-primary-yellow transition-colors mr-3" size={18} />
+              <span className="text-gray-500 font-medium text-sm">Search...</span>
             </button>
           </div>
         )}
 
-        {/* 3. Actions (Right) */}
-        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+        {/* Mobile Search Button (Visible only on XS) */}
+        {location.pathname !== '/search' && (
+          <button 
+            onClick={() => navigate('/search')}
+            className="xs:hidden p-2.5 rounded-full text-gray-300 hover:text-primary-yellow bg-white/5 border border-white/5"
+          >
+            <FiSearch size={20} />
+          </button>
+        )}
 
-          {/* Random / Surprise Me */}
+        {/* 3. Actions (Right) */}
+        <div className="flex items-center gap-1 xs:gap-2 sm:gap-4 flex-shrink-0">
+
+          {/* Random / Surprise Me - Hidden on very small mobile */}
           <button
             onClick={handleSurpriseClick}
-            className="p-2.5 rounded-full text-gray-300 hover:text-primary-yellow hover:bg-white/10 transition-all relative"
+            className="p-2 xs:p-2.5 rounded-full text-gray-300 hover:text-primary-yellow hover:bg-white/10 transition-all relative hidden sm:block"
             title="Surprise Me"
           >
             <FiZap size={20} />

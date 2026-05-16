@@ -103,7 +103,7 @@ const MovieCard = memo(({
   // ----------------------------------------------------------------
   return (
     <motion.div
-      className="relative flex flex-col gap-3 w-[160px] sm:w-[170px] cursor-pointer group mb-2"
+      className="relative flex flex-col gap-2 sm:gap-3 w-full cursor-pointer group mb-4"
       variants={standardCardVariants}
       initial="rest"
       whileHover="hover"
@@ -111,11 +111,11 @@ const MovieCard = memo(({
       onClick={handleCardClick}
     >
       {/* Poster Image Container */}
-      <div className="relative aspect-[2/3] w-full bg-[#121212] rounded-xl overflow-hidden shadow-md border border-white/5 group-hover:shadow-2xl transition-all duration-300">
+      <div className="relative aspect-[2/3] w-full bg-[#1a1a1a] rounded-xl overflow-hidden shadow-lg border border-white/5 group-hover:shadow-yellow-glow/20 transition-all duration-300">
         <img
           src={getPosterUrl(posterPath, isMobile)}
           alt={title}
-          className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110"
           loading="lazy"
           onError={(e) => { e.target.onerror = null; e.target.src = PLACEHOLDER_POSTER; }}
         />
@@ -124,31 +124,39 @@ const MovieCard = memo(({
         <div
           role="button"
           tabIndex={0}
-          className={`absolute top-2 right-2 p-1.5 rounded-full backdrop-blur-md border border-white/10 z-30 shadow-lg transition-colors duration-200
-            ${isInWatchlist ? 'bg-[#FFD400] text-black' : 'bg-black/40 text-white hover:bg-[#FFD400] hover:text-black'}
+          className={`absolute top-2 right-2 p-1.5 sm:p-2 rounded-full backdrop-blur-md border border-white/10 z-30 shadow-xl transition-all duration-200 active:scale-90
+            ${isInWatchlist ? 'bg-primary-yellow text-black' : 'bg-black/60 text-white hover:bg-primary-yellow hover:text-black'}
           `}
           onClick={handleWatchlistToggle}
         >
-          {isInWatchlist ? <FiCheck size={12} /> : <FiPlus size={12} />}
+          {isInWatchlist ? <FiCheck size={14} /> : <FiPlus size={14} />}
         </div>
+
+        {/* Rating Overlay (Mobile Only - Bottom Left) */}
+        {isMobile && rating && rating !== "N/A" && (
+            <div className="absolute bottom-2 left-2 px-1.5 py-0.5 bg-black/70 backdrop-blur-sm rounded-md text-[#FFD400] text-[10px] font-bold flex items-center gap-1 border border-white/10">
+                <FiStar size={10} fill="#FFD400" /> {rating}
+            </div>
+        )}
       </div>
 
       {/* Details Below Poster */}
-      <div className="flex flex-col px-0.5 space-y-1">
-        <h4 className="text-gray-100 font-bold text-[13px] leading-tight line-clamp-2 group-hover:text-[#FFD400] transition-colors duration-200">
+      <div className="flex flex-col px-1 space-y-0.5 sm:space-y-1">
+        <h4 className="text-gray-100 font-bold text-xs sm:text-sm md:text-base leading-tight line-clamp-1 sm:line-clamp-2 group-hover:text-primary-yellow transition-colors duration-200">
           {title}
         </h4>
-        <div className="flex items-center justify-between text-[11px] text-gray-400 font-medium">
+        <div className="flex items-center justify-between text-[10px] sm:text-xs text-gray-500 font-medium">
           <div className="flex items-center gap-2">
-            {rating && rating !== "N/A" && rating !== "NR" && (
+            {!isMobile && rating && rating !== "N/A" && (
               <>
-                <span className="flex items-center gap-1 text-[#FFD400]">
+                <span className="flex items-center gap-1 text-primary-yellow">
                   <FiStar size={10} fill="#FFD400" /> {rating}
                 </span>
-                <span className="text-gray-600">•</span>
+                <span className="text-gray-700">•</span>
               </>
             )}
-            <span className="truncate max-w-[80px]">{genre}</span>
+            <span className="truncate">{genre}</span>
+            {year && <><span className="text-gray-700">•</span><span>{year}</span></>}
           </div>
         </div>
       </div>

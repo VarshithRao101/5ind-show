@@ -58,12 +58,11 @@ const FilterModal = () => {
                         className="fixed inset-0 bg-black/80 backdrop-blur-sm z-[60]"
                     />
 
-                    {/* Modal */}
                     <motion.div
-                        initial={{ opacity: 0, scale: 0.95, y: 20 }}
-                        animate={{ opacity: 1, scale: 1, y: 0 }}
-                        exit={{ opacity: 0, scale: 0.95, y: 20 }}
-                        className="fixed inset-0 m-auto w-full max-w-lg max-h-[90vh] bg-[#181818] border border-white/10 rounded-2xl shadow-2xl z-[70] overflow-hidden flex flex-col"
+                        initial={{ opacity: 0, y: 100 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        exit={{ opacity: 0, y: 100 }}
+                        className="fixed inset-x-0 bottom-0 sm:inset-0 m-auto w-full sm:max-w-lg h-[85vh] sm:max-h-[90vh] bg-[#181818] border-t sm:border border-white/10 rounded-t-[2rem] sm:rounded-2xl shadow-2xl z-[70] overflow-hidden flex flex-col"
                     >
                         {/* Header */}
                         <div className="flex items-center justify-between p-6 border-b border-white/5 shrink-0">
@@ -84,7 +83,7 @@ const FilterModal = () => {
                                         <button onClick={() => setLocalFilters({ ...localFilters, sortBy: 'popularity' })} className="text-xs text-primary-yellow hover:text-white flex items-center gap-1"><FiRefreshCcw /> Reset</button>
                                     )}
                                 </div>
-                                <div className="grid grid-cols-3 gap-3">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
                                     {[
                                         { id: 'popularity', label: 'Popularity' },
                                         { id: 'rating', label: 'Rating' },
@@ -173,7 +172,7 @@ const FilterModal = () => {
                                         <button onClick={() => setLocalFilters({ ...localFilters, language: 'en' })} className="text-xs text-primary-yellow hover:text-white flex items-center gap-1"><FiRefreshCcw /> Reset</button>
                                     )}
                                 </div>
-                                <div className="grid grid-cols-3 gap-2">
+                                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                     <button
                                         onClick={() => setLocalFilters({ ...localFilters, language: null })}
                                         className={`py-2 rounded-lg text-xs font-bold transition-all border ${localFilters.language === null
