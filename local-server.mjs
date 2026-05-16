@@ -2,8 +2,8 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import handler from './api/tmdb.js';
-import omdbHandler from './api/omdb.js';
+import handler from './api/tmdb/index.mjs';
+import omdbHandler from './api/omdb.mjs';
 
 dotenv.config();
 
