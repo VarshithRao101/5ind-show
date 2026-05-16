@@ -57,7 +57,7 @@ const ChatBot = () => {
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
                     onClick={() => setIsOpen(true)}
-                    className="fixed bottom-24 right-6 z-50 w-14 h-14 bg-[#FFD400] rounded-full shadow-[0_0_20px_rgba(255,212,0,0.4)] flex items-center justify-center text-black"
+                    className="fixed bottom-28 right-4 z-50 w-14 h-14 bg-[#FFD400] rounded-full shadow-[0_0_20px_rgba(255,212,0,0.4)] flex items-center justify-center text-black"
                 >
                     <FiMessageSquare size={24} fill="currentColor" />
                 </motion.button>

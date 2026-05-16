@@ -207,13 +207,23 @@ export default function MovieDetails() {
                             </div>
                         )}
 
-                        <div className="absolute top-4 left-4 z-50">
-                            <button
-                                onClick={() => navigate(-1)}
-                                className="bg-black/50 hover:bg-primary-yellow hover:text-black text-white p-2.5 sm:p-3 rounded-full backdrop-blur-md transition-all border border-white/10"
-                            >
-                                <FiArrowLeft size={24} />
-                            </button>
+                        <div className="fixed top-4 left-0 right-0 z-50 px-4 pointer-events-none">
+                            <div className="max-w-7xl mx-auto flex items-center justify-between">
+                                <button
+                                    onClick={() => navigate(-1)}
+                                    className="pointer-events-auto bg-black/50 hover:bg-primary-yellow hover:text-black text-white p-2.5 sm:p-3 rounded-full backdrop-blur-md transition-all border border-white/10"
+                                >
+                                    <FiArrowLeft size={22} />
+                                </button>
+                                
+                                <div className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 bg-black/50 backdrop-blur-md rounded-full border border-white/10">
+                                    <span className="font-heading font-black text-base tracking-tighter text-white">
+                                        5IND<span className="text-primary-yellow">SHOW</span>
+                                    </span>
+                                </div>
+                                
+                                <div className="w-10 sm:w-12" /> {/* Spacer for symmetry */}
+                            </div>
                         </div>
                         <div className="absolute inset-0 flex flex-col justify-end p-6 md:p-16 max-w-7xl mx-auto z-10">
                             <div className="flex flex-col md:flex-row gap-6 md:gap-10 items-center md:items-end text-center md:text-left">

@@ -155,13 +155,25 @@ const SeriesDetails = () => {
 
     return (
         <div className="min-h-screen bg-[#0f0f0f] text-white pb-20">
-            {/* Back Button */}
-            <button
-                onClick={() => navigate(-1)}
-                className="fixed top-4 left-4 z-50 p-2.5 sm:p-3 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-black/80 transition-all border border-white/10"
-            >
-                <FiArrowLeft size={24} />
-            </button>
+            {/* Portable Navigation */}
+            <div className="fixed top-4 left-0 right-0 z-50 px-4 pointer-events-none">
+                <div className="max-w-7xl mx-auto flex items-center justify-between">
+                    <button
+                        onClick={() => navigate(-1)}
+                        className="pointer-events-auto p-2.5 sm:p-3 bg-black/50 backdrop-blur-md rounded-full text-white hover:bg-black/80 transition-all border border-white/10"
+                    >
+                        <FiArrowLeft size={22} />
+                    </button>
+                    
+                    <div className="pointer-events-auto flex items-center gap-2 px-3 py-1.5 bg-black/50 backdrop-blur-md rounded-full border border-white/10">
+                        <span className="font-heading font-black text-base tracking-tighter text-white">
+                            5IND<span className="text-primary-yellow">SHOW</span>
+                        </span>
+                    </div>
+
+                    <div className="w-10 sm:w-12" /> {/* Spacer */}
+                </div>
+            </div>
 
             {/* ==================================================================================
                SECTION 1: HERO (MATCH MOVIE PAGE)

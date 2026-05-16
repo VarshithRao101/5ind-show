@@ -40,7 +40,7 @@ const BottomNav = () => {
                   key={label}
                   layout
                   onClick={() => navigate(path)}
-                  className={`relative flex items-center justify-center h-12 md:h-14 rounded-[24px] px-4 md:px-6 overflow-hidden transition-colors duration-300 isolate`}
+                  className={`relative flex items-center justify-center h-12 md:h-14 rounded-[24px] px-3 sm:px-6 overflow-hidden transition-colors duration-300 isolate`}
                   initial={false}
                   animate={{
                     width: active ? 'auto' : 56, // Slightly wider inactive touch target

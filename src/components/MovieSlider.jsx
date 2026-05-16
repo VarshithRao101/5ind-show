@@ -101,8 +101,8 @@ const MovieSlider = ({
             </div>
 
             <div className="relative -ml-4 md:-ml-12 perspective-1000">
-                {/* Left Arrow */}
-                <div className="absolute left-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-r from-[#0f0f0f] to-transparent z-20 flex items-center justify-start pl-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+                {/* Left Arrow - Hidden on mobile */}
+                <div className="absolute left-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-r from-[#0f0f0f] to-transparent z-20 hidden md:flex items-center justify-start pl-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
                     <button
                         onClick={() => scroll('left')}
                         className="bg-black/80 hover:bg-primary-yellow hover:text-black text-white rounded-full p-3 backdrop-blur-md border border-white/10 transition-all shadow-lg hover:scale-110"
@@ -156,8 +156,8 @@ const MovieSlider = ({
                     <div className="min-w-[20px] md:min-w-[40px] flex-shrink-0" />
                 </motion.div>
 
-                {/* Right Arrow */}
-                <div className="absolute right-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-l from-[#0f0f0f] to-transparent z-20 flex items-center justify-end pr-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
+                {/* Right Arrow - Hidden on mobile */}
+                <div className="absolute right-0 top-0 bottom-0 w-12 md:w-20 bg-gradient-to-l from-[#0f0f0f] to-transparent z-20 hidden md:flex items-center justify-end pr-4 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none group-hover:pointer-events-auto">
                     <button
                         onClick={() => scroll('right')}
                         className="bg-black/80 hover:bg-primary-yellow hover:text-black text-white rounded-full p-3 backdrop-blur-md border border-white/10 transition-all shadow-lg hover:scale-110"

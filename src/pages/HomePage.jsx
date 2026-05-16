@@ -47,16 +47,16 @@ const HeroSlide = ({ movie }) => {
             <div className="absolute inset-0 bg-gradient-to-r from-[#0f0f0f] via-[#0f0f0f]/30 to-transparent" />
 
             {/* Content Container */}
-            <div className="absolute inset-0 flex items-center">
-                <div className="w-full max-w-7xl mx-auto px-6 md:px-12 pt-32 md:pt-0 flex flex-col justify-center h-full">
+            <div className="absolute inset-0 flex items-end md:items-center pb-12 md:pb-0">
+                <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 md:px-12 flex flex-col justify-end md:justify-center h-full">
                     <motion.div
                         initial={{ opacity: 0, y: 30 }}
                         animate={{ opacity: 1, y: 0 }}
                         transition={{ duration: 0.8, delay: 0.2 }}
-                        className="max-w-3xl space-y-4 md:space-y-6"
+                        className="max-w-3xl space-y-3 sm:space-y-4 md:space-y-6"
                     >
                         {/* Title */}
-                        <h1 className="text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl font-heading">
+                        <h1 className="text-2xl xs:text-3xl sm:text-4xl md:text-7xl lg:text-8xl font-black text-white tracking-tighter leading-tight drop-shadow-2xl font-heading line-clamp-2">
                             {movie.title || movie.name}
                         </h1>
 
@@ -77,34 +77,33 @@ const HeroSlide = ({ movie }) => {
                         </p>
 
                         {/* Buttons */}
-                        <div className="flex flex-wrap items-center gap-3 md:gap-4 pt-4 md:pt-6">
+                        <div className="flex items-center gap-2 sm:gap-4 pt-2 sm:pt-4 md:pt-6">
                             <button
                                 onClick={() => navigate(movie.media_type === 'tv' ? `/tv/${movie.id}` : `/movie/${movie.id}`)}
-                                className="flex items-center gap-2 md:gap-3 bg-[#FFD400] text-black px-5 md:px-8 py-2.5 md:py-3.5 rounded-xl hover:bg-[#e3b616] transition-all font-bold text-sm md:text-lg active:scale-95 shadow-lg shadow-yellow-500/20"
+                                className="flex items-center gap-2 md:gap-3 bg-[#FFD400] text-black px-4 sm:px-6 md:px-8 py-2 md:py-3.5 rounded-lg sm:rounded-xl hover:bg-[#e3b616] transition-all font-bold text-xs sm:text-sm md:text-lg active:scale-95 shadow-lg shadow-yellow-500/20"
                             >
-                                <FiPlay size={18} fill="black" />
+                                <FiPlay size={16} fill="black" className="md:w-5 md:h-5" />
                                 Play
                             </button>
 
                             <button
                                 onClick={() => navigate(movie.media_type === 'tv' ? `/tv/${movie.id}` : `/movie/${movie.id}`)}
-                                className="flex items-center gap-2 md:gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white px-5 md:px-8 py-2.5 md:py-3.5 rounded-xl hover:bg-white/20 transition-all font-bold text-sm md:text-lg active:scale-95"
+                                className="flex items-center gap-2 md:gap-3 bg-white/10 backdrop-blur-md border border-white/20 text-white px-4 sm:px-6 md:px-8 py-2 md:py-3.5 rounded-lg sm:rounded-xl hover:bg-white/20 transition-all font-bold text-xs sm:text-sm md:text-lg active:scale-95"
                             >
-                                <FiInfo size={18} />
+                                <FiInfo size={16} className="md:w-5 md:h-5" />
                                 Info
                             </button>
 
-                            {/* Watchlist button - only if not TV or handle correctly */}
                             <button
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     if (inList) removeFromWatchlist(movie.id);
                                     else addToWatchlist(movie);
                                 }}
-                                className="p-2.5 md:p-3.5 rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
+                                className="p-2 sm:p-2.5 md:p-3.5 rounded-full border border-white/20 bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-sm"
                                 title={inList ? "Remove from List" : "Add to List"}
                             >
-                                {inList ? <FiCheck size={20} /> : <FiPlus size={20} />}
+                                {inList ? <FiCheck size={18} className="md:w-5 md:h-5" /> : <FiPlus size={18} className="md:w-5 md:h-5" />}
                             </button>
                         </div>
                     </motion.div>

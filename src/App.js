@@ -31,11 +31,15 @@ const AppContent = () => {
   const { darkTheme } = useContext(UserContext);
   const location = useLocation();
 
-  // Pages where header/footer should not appear
+  // Pages where header/footer should not appear (usually because they have their own nav)
   const hideHeaderFooterPaths = ['/login', '/signup', '/genres'];
+  const isDetailPage = location.pathname.startsWith('/movie/') || 
+                       location.pathname.startsWith('/tv/') || 
+                       location.pathname.startsWith('/series/') || 
+                       location.pathname.startsWith('/actor/');
+  
   const showHeaderFooter =
-    isAuthenticated &&
-    !hideHeaderFooterPaths.includes(location.pathname);
+    !hideHeaderFooterPaths.includes(location.pathname) && !isDetailPage;
 
   // REMOVED BLOCKING LOADING CHECK
   // The app is now Guest-First and non-blocking.
