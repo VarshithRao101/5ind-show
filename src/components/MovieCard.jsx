@@ -48,12 +48,12 @@ const MovieCard = memo(({
   if (rank) {
     return (
       <div
-        className="relative group cursor-pointer flex items-end w-[150px] h-[170px] sm:w-[260px] sm:h-[300px] flex-shrink-0"
+        className="relative group cursor-pointer flex items-end w-[200px] h-[220px] sm:w-[260px] sm:h-[300px] flex-shrink-0"
         onClick={handleCardClick}
       >
         <div className="absolute -left-6 bottom-0 z-0 h-full flex items-end pointer-events-none select-none">
           <span
-            className="text-[100px] sm:text-[220px] leading-[0.8] font-black tracking-tighter text-[#121212] drop-shadow-lg"
+            className="text-[140px] sm:text-[220px] leading-[0.8] font-black tracking-tighter text-[#121212] drop-shadow-lg"
             style={{
               WebkitTextStroke: '4px #444',
               color: '#121212',
@@ -66,7 +66,7 @@ const MovieCard = memo(({
 
         {/* Card Itself (Shifted Right) */}
         <motion.div
-          className="relative z-10 w-[100px] sm:w-[160px] aspect-[2/3] bg-[#121212] rounded-xl overflow-hidden ml-auto border border-white/10 shadow-lg"
+          className="relative z-10 w-[140px] sm:w-[160px] aspect-[2/3] bg-[#121212] rounded-xl overflow-hidden ml-auto border border-white/10 shadow-lg"
           variants={rankedCardVariants}
           initial="rest"
           whileHover="hover"
