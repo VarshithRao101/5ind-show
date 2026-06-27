@@ -286,30 +286,61 @@ const SeriesDetails = () => {
                                 episodes.map(ep => (
                                     <div
                                         key={ep.id}
-                                        className="bg-[#1a1a1a] rounded-xl p-4 md:p-5 border border-white/5 hover:border-white/10 transition-colors group relative overflow-hidden"
+                                        className="bg-[#1a1a1a] rounded-xl border border-white/5 hover:border-primary-yellow/30 transition-all duration-300 group relative overflow-hidden hover:shadow-lg hover:shadow-primary-yellow/5"
                                     >
-                                        <div className="flex gap-4">
-                                            {/* Episode Number */}
-                                            <div className="text-2xl font-black text-white/10 group-hover:text-primary-yellow/20 transition-colors">
-                                                {ep.episode_number.toString().padStart(2, '0')}
+                                        <div className="flex gap-0">
+                                            {/* Episode Still / Thumbnail */}
+                                            <div className="flex-shrink-0 w-[130px] sm:w-[180px] md:w-[220px] aspect-video relative overflow-hidden rounded-l-xl bg-[#111]">
+                                                {ep.still_path ? (
+                                                    <img
+                                                        src={`https://image.tmdb.org/t/p/w300${ep.still_path}`}
+                                                        alt={ep.name}
+                                                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                                                        loading="lazy"
+                                                        onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                                                    />
+                                                ) : null}
+                                                {/* Fallback placeholder */}
+                                                <div
+                                                    className="absolute inset-0 flex flex-col items-center justify-center gap-1 bg-gradient-to-br from-[#1f1f1f] to-[#111]"
+                                                    style={{ display: ep.still_path ? 'none' : 'flex' }}
+                                                >
+                                                    <span className="text-3xl font-black text-white/10">
+                                                        {ep.episode_number.toString().padStart(2, '0')}
+                                                    </span>
+                                                    <span className="text-[10px] text-gray-600 uppercase tracking-widest">No Image</span>
+                                                </div>
+                                                {/* Episode number badge */}
+                                                <div className="absolute top-2 left-2 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] font-bold text-primary-yellow border border-primary-yellow/30">
+                                                    E{ep.episode_number.toString().padStart(2, '0')}
+                                                </div>
+                                                {/* Runtime badge */}
+                                                {ep.runtime && (
+                                                    <div className="absolute bottom-2 right-2 bg-black/70 backdrop-blur-sm px-1.5 py-0.5 rounded text-[10px] text-gray-300 flex items-center gap-1">
+                                                        <FiClock size={9} /> {ep.runtime}m
+                                                    </div>
+                                                )}
                                             </div>
 
-                                            <div className="flex-1">
-                                                <div className="flex flex-wrap justify-between items-start gap-2 mb-2">
-                                                    <h4 className="text-base font-bold text-gray-100 group-hover:text-primary-yellow transition-colors">
+                                            {/* Episode Details */}
+                                            <div className="flex-1 p-3 sm:p-4 flex flex-col justify-between min-w-0">
+                                                <div>
+                                                    <h4 className="text-sm sm:text-base font-bold text-gray-100 group-hover:text-primary-yellow transition-colors leading-tight line-clamp-2 mb-1.5">
                                                         {ep.name}
                                                     </h4>
-                                                    {ep.runtime && (
-                                                        <span className="text-xs text-gray-500 font-mono flex items-center gap-1">
-                                                            <FiClock /> {ep.runtime}m
+                                                    <p className="text-xs sm:text-sm text-gray-400 line-clamp-2 sm:line-clamp-3 leading-relaxed">
+                                                        {ep.overview || "No description available."}
+                                                    </p>
+                                                </div>
+                                                <div className="flex items-center justify-between mt-2 gap-2 flex-wrap">
+                                                    <span className="text-[10px] sm:text-xs text-gray-600 font-medium">
+                                                        {ep.air_date ? `Aired: ${ep.air_date}` : ''}
+                                                    </span>
+                                                    {ep.vote_average > 0 && (
+                                                        <span className="text-[10px] sm:text-xs text-primary-yellow font-bold flex items-center gap-1">
+                                                            ⭐ {ep.vote_average.toFixed(1)}
                                                         </span>
                                                     )}
-                                                </div>
-                                                <p className="text-sm text-gray-400 line-clamp-2 md:line-clamp-3 leading-relaxed">
-                                                    {ep.overview || "No description available."}
-                                                </p>
-                                                <div className="mt-3 text-xs text-gray-600 font-medium">
-                                                    Aired: {ep.air_date}
                                                 </div>
                                             </div>
                                         </div>

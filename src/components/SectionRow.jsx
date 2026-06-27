@@ -65,7 +65,7 @@ const SectionRow = memo(({ title, movies, onMovieClick }) => {
           {(movies || []).map((movie) => (
             <div
               key={movie?.id}
-              className="flex-shrink-0 w-40 sm:w-48"
+              className="flex-shrink-0 w-28 sm:w-44"
             >
               <MovieCard
                 id={movie.id}

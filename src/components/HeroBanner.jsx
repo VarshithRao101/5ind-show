@@ -14,7 +14,7 @@ const HeroBanner = ({ movie, onWatch, onAdd }) => {
       initial={{ opacity: 0, scale: 0.98 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, ease: "easeOut" }}
-      className="relative w-full h-[400px] sm:h-[500px] lg:h-[600px] mb-10 overflow-hidden rounded-3xl shadow-yellow-glow-lg group"
+      className="relative w-full h-[260px] sm:h-[450px] lg:h-[580px] mb-10 overflow-hidden rounded-3xl shadow-yellow-glow-lg group"
     >
       {/* Background with blur overlay */}
       <div
@@ -29,7 +29,7 @@ const HeroBanner = ({ movie, onWatch, onAdd }) => {
       </div>
 
       {/* Content */}
-      <div className="relative h-full px-6 sm:px-10 lg:px-16 flex flex-col justify-end pb-10 sm:pb-14 lg:pb-20">
+      <div className="relative h-full px-4 sm:px-10 lg:px-16 flex flex-col justify-end pb-5 sm:pb-14 lg:pb-20">
         <motion.div
           initial={{ y: 30, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
@@ -51,16 +51,16 @@ const HeroBanner = ({ movie, onWatch, onAdd }) => {
           )}
 
           {/* Title */}
-          <h1 className="text-4xl sm:text-5xl lg:text-7xl font-heading font-bold text-white mb-4 drop-shadow-2xl line-clamp-2">
+          <h1 className="text-2xl sm:text-5xl lg:text-7xl font-heading font-bold text-white mb-2 sm:mb-4 drop-shadow-2xl line-clamp-2">
             {movie?.title || movie?.name || 'Loading...'}
           </h1>
 
           {/* Rating & Year */}
-          <div className="flex items-center gap-4 mb-5">
-            <div className="bg-primary-yellow text-black px-4 py-2 rounded-xl text-base font-bold flex items-center gap-2 shadow-yellow-glow">
+          <div className="flex items-center gap-2 sm:gap-4 mb-3 sm:mb-5">
+            <div className="bg-primary-yellow text-black px-2 py-1 sm:px-4 sm:py-2 rounded-xl text-xs sm:text-base font-bold flex items-center gap-1 sm:gap-2 shadow-yellow-glow">
               ⭐ {getRating(movie)}
             </div>
-            <span className="text-white/90 text-lg font-semibold">{
+            <span className="text-white/90 text-sm sm:text-lg font-semibold">{
               movie?.release_date
                 ? new Date(movie.release_date).getFullYear()
                 : movie?.first_air_date
@@ -70,19 +70,19 @@ const HeroBanner = ({ movie, onWatch, onAdd }) => {
           </div>
 
           {/* Description */}
-          <p className="text-white/80 text-base sm:text-lg mb-8 max-w-2xl line-clamp-3 leading-relaxed">
+          <p className="text-white/80 text-xs sm:text-lg mb-4 sm:mb-8 max-w-2xl line-clamp-2 sm:line-clamp-3 leading-relaxed hidden sm:block">
             {movie?.description || movie?.overview || 'An incredible cinematic experience awaits you.'}
           </p>
 
           {/* Action Buttons */}
-          <div className="flex flex-wrap gap-4">
+          <div className="flex flex-wrap gap-2 sm:gap-4">
             <motion.button
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => onWatch?.(movie)}
-              className="flex items-center gap-3 bg-primary-yellow hover:bg-primary-yellow-hover text-black px-8 py-4 rounded-2xl font-bold text-lg transition-all shadow-yellow-glow-lg"
+              className="flex items-center gap-2 bg-primary-yellow hover:bg-primary-yellow-hover text-black px-4 py-2 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg transition-all shadow-yellow-glow-lg"
             >
-              <FiPlay size={24} fill="currentColor" />
+              <FiPlay size={16} className="sm:w-6 sm:h-6" fill="currentColor" />
               Watch Now
             </motion.button>
 
@@ -90,9 +90,9 @@ const HeroBanner = ({ movie, onWatch, onAdd }) => {
               whileHover={{ scale: 1.05 }}
               whileTap={{ scale: 0.95 }}
               onClick={() => onAdd?.(movie)}
-              className="flex items-center gap-3 glassmorphism hover:bg-white/10 text-white border-2 border-white/20 px-8 py-4 rounded-2xl font-bold text-lg transition-all"
+              className="flex items-center gap-2 glassmorphism hover:bg-white/10 text-white border-2 border-white/20 px-4 py-2 sm:px-8 sm:py-4 rounded-xl sm:rounded-2xl font-bold text-sm sm:text-lg transition-all"
             >
-              <FiPlus size={24} />
+              <FiPlus size={16} className="sm:w-6 sm:h-6" />
               Add to List
             </motion.button>
           </div>

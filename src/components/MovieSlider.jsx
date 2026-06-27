@@ -133,7 +133,7 @@ const MovieSlider = ({
                                 <motion.div
                                     key={`${movie.id}-${index}`}
                                     variants={itemVariants}
-                                    className={`${ranked ? 'min-w-[200px] sm:min-w-[260px]' : 'min-w-[140px] sm:min-w-[170px]'} snap-start flex-shrink-0 transform transition-transform hover:z-30 origin-center`}
+                                    className={`${ranked ? 'min-w-[150px] sm:min-w-[260px]' : 'min-w-[110px] sm:min-w-[160px]'} snap-start flex-shrink-0 transform transition-transform hover:z-30 origin-center`}
                                 >
                                     <MovieCard
                                         id={movie.id}
