@@ -4,15 +4,15 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFirestore } from 'firebase/firestore';
 
-// Your web app's Firebase configuration
+// Firebase configuration loaded from environment variables
+// Never hardcode keys here - set them in .env (local) or Vercel dashboard (production)
 const firebaseConfig = {
-  apiKey: 'AIzaSyC8xK6pmw8rGaD5aHpKGXlfov57nBacFAg',
-  authDomain: 'indshow-f1057.firebaseapp.com',
-  projectId: 'indshow-f1057',
-  storageBucket: 'indshow-f1057.firebasestorage.app',
-  messagingSenderId: '899893533840',
-  appId: '1:899893533840:web:4177b9f278c27c958ccc15',
-  measurementId: 'G-D08PP7JLD4',
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 // Initialize Firebase

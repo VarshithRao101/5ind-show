@@ -13,18 +13,43 @@
 
 # misc
 .DS_Store
+
+# Environment variables - NEVER commit these
 .env
 .env.local
+.env.development
 .env.development.local
+.env.test
 .env.test.local
+.env.production
 .env.production.local
+*.env
 
+# Logs
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 
-# Local Env & Secrets
+# Local & secrets
 .vercel
 license_keys.csv
 *.csv
+*.key
+*.pem
+secrets.*
 
+# Docs / dev notes (keep only README.md)
+CHANGELOG.md
+FIREBASE_EMAIL_OTP_SETUP.md
+IMAGE_FIX_GUIDE.md
+PHASE5_IMPLEMENTATION.md
+QUICK_FIX_CHECKLIST.md
+QUICK_REFERENCE.md
+README_PHASE5.md
+RECAPTCHA_INTEGRATION.md
+STATUS_REPORT.txt
+TESTING_GUIDE.md
+
+# Editor
+.vscode/
+.idea/
