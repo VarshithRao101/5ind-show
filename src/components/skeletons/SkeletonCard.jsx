@@ -2,7 +2,7 @@ import React from 'react';
 
 const SkeletonCard = () => {
     return (
-        <div className="flex-shrink-0 w-[160px] sm:w-[170px] aspect-[2/3] bg-[#1f1f1f] rounded-xl overflow-hidden relative border border-white/5">
+        <div className="flex-shrink-0 w-[110px] sm:w-[130px] aspect-[2/3] bg-[#1f1f1f] rounded-xl overflow-hidden relative border border-white/5">
             {/* Poster shimmer */}
             <div className="w-full h-full shimmer bg-white/5" />
 

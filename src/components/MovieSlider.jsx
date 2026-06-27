@@ -118,7 +118,7 @@ const MovieSlider = ({
                     initial="hidden"
                     whileInView="visible"
                     viewport={{ once: true, margin: "100px" }}
-                    className={`flex gap-4 overflow-x-auto overflow-y-hidden px-4 md:px-12 pb-12 pt-4 scroll-smooth snap-x snap-mandatory ${ranked ? 'items-end' : 'items-center'} scrollbar-hide md:[&::-webkit-scrollbar]:block`}
+                    className={`flex gap-2 overflow-x-auto overflow-y-hidden px-4 md:px-12 pb-12 pt-4 scroll-smooth snap-x snap-mandatory ${ranked ? 'items-end' : 'items-center'} scrollbar-hide md:[&::-webkit-scrollbar]:block`}
                 >
                     {loading ? (
                         [...Array(6)].map((_, i) => (
@@ -133,7 +133,7 @@ const MovieSlider = ({
                                 <motion.div
                                     key={`${movie.id}-${index}`}
                                     variants={itemVariants}
-                                    className={`${ranked ? 'min-w-[200px] sm:min-w-[260px]' : 'min-w-[140px] sm:min-w-[170px]'} snap-start flex-shrink-0 transform transition-transform hover:z-30 origin-center`}
+                                    className={`${ranked ? 'min-w-[200px] sm:min-w-[260px]' : 'min-w-[110px] sm:min-w-[130px]'} snap-start flex-shrink-0 transform transition-transform hover:z-30 origin-center`}
                                 >
                                     <MovieCard
                                         id={movie.id}
